@@ -23,7 +23,7 @@
     <style>
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .tab-active { background-color: #0ea5e9; color: white; transform: scale(1.05); }
+        .tab-active { background-color: #0ea5e9; color: white; transform: scale(1.05); border-color: #0ea5e9; }
         .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -51,7 +51,7 @@
     </section>
 
     <nav class="sticky top-0 z-40 bg-slate-100/95 backdrop-blur border-b border-slate-200 py-3">
-        <div class="px-4 overflow-x-auto hide-scrollbar"><div class="flex gap-3" id="date-tabs"></div></div>
+        <div class="px-4 overflow-x-auto hide-scrollbar"><div class="flex gap-2" id="date-tabs"></div></div>
     </nav>
 
     <main class="container mx-auto px-4 py-6 max-w-2xl min-h-[50vh]" id="itinerary-content"></main>
@@ -59,7 +59,7 @@
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around py-3 z-50 text-xs text-gray-500">
         <a href="#" onclick="showModal(); return false;" class="flex flex-col items-center"><i class="fas fa-snowflake text-lg mb-1"></i>雪場</a>
         <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'})" class="flex flex-col items-center text-primary"><i class="fas fa-calendar-alt text-lg mb-1"></i>行程</a>
-        <a href="https://maps.google.com" target="_blank" class="flex flex-col items-center"><i class="fas fa-location-arrow text-lg mb-1"></i>導航</a>
+        <a href="https://maps.app.goo.gl/placeholder" target="_blank" class="flex flex-col items-center"><i class="fas fa-location-arrow text-lg mb-1"></i>導航</a>
     </div>
 
     <div id="resort-modal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4">
@@ -77,17 +77,15 @@
 
     <script>
         // ============================================
-        // ★★★ 請更換為您的 Google Sheet CSV 連結 ★★★
+        // ★★★ 請確認這裡還是您的 CSV 連結 ★★★
         // ============================================
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQmJ01aubtIQaCnOOaW7TbqINSX0sGE8OoewKq7uREL9lEedFC1rLWc90tHCVhmOecig-wrQH-9RPml/pub?gid=811463742&single=true&output=csv";
         
-        // 只有兩個地點的座標
         const coords = { 
             Tokyo: { lat: 35.6895, long: 139.6917 }, 
             Hakuba: { lat: 36.6982, long: 137.8619 } 
         };
 
-        // 1. 讀取 Google Sheet
         async function fetchSheetData() {
             return new Promise((resolve) => {
                 Papa.parse(SHEET_URL, {
@@ -98,28 +96,48 @@
             });
         }
 
-        // 2. 處理資料 (簡單化)
+        // ★ 核心升級：抓取星期與備註
         function processSheet(data) {
             const grouped = {};
             data.forEach(row => {
                 if (!row.Date || !row.Title) return;
-                const dKey = row.Date.trim(); // "12/21"
+                const dKey = row.Date.trim(); 
                 
                 if (!grouped[dKey]) {
-                    // ★ 判斷地點：只要有 "白馬" 或 "Hakuba" 就是白馬，否則都是東京
+                    // 1. 處理地點判斷 (天氣用)
                     const loc = row.Location || "";
                     const isHakuba = loc.includes("白馬") || loc.toLowerCase().includes("hakuba");
                     
+                    // 2. 處理星期：把 "週一" 變成 "一"
+                    let dayChar = (row.Day || "").replace("週", "").trim(); 
+                    if(dayChar === "") dayChar = ""; // 防止空白
+
+                    // 3. 處理按鈕備註：偵測關鍵字
+                    let tag = "";
+                    if (loc.includes("移動")) tag = "移動日";
+                    else if (loc.includes("會合")) tag = "會合日";
+                    else if (loc.includes("新年") || loc.includes("跨年")) tag = "新年";
+                    else if (loc.includes("飛行")) tag = "飛行日";
+                    
                     grouped[dKey] = {
                         date: dKey,
-                        location: isHakuba ? "白馬 Hakuba" : "東京 Tokyo",
-                        cityKey: isHakuba ? "Hakuba" : "Tokyo", // 用來查天氣的 key
+                        dayChar: dayChar, // 存起來：星期幾
+                        tag: tag,         // 存起來：特殊備註
+                        cityKey: isHakuba ? "Hakuba" : "Tokyo",
+                        location: isHakuba ? "白馬 Hakuba" : "東京 Tokyo", // 標題顯示用
                         weather: { temp: "N/A", icon: "fa-calendar", status: "預報未出" },
                         details: []
                     };
                 }
 
-                // 處理 Icon (FontAwesome 或 Emoji)
+                // 如果同一天後面有出現更重要的關鍵字，也可以更新 tag (例如第一行沒寫移動，第二行寫了)
+                const loc = row.Location || "";
+                if (!grouped[dKey].tag) {
+                     if (loc.includes("移動")) grouped[dKey].tag = "移動日";
+                     else if (loc.includes("會合")) grouped[dKey].tag = "會合日";
+                     else if (loc.includes("新年") || loc.includes("跨年")) grouped[dKey].tag = "新年";
+                }
+
                 const iconRaw = (row.Icon || "fa-circle").trim();
                 const iconHtml = iconRaw.startsWith("fa-") ? `<i class="fas ${iconRaw}"></i>` : `<span class="text-xl">${iconRaw}</span>`;
 
@@ -130,9 +148,7 @@
             return Object.values(grouped);
         }
 
-        // 3. 抓取天氣 (暴力比對法)
         async function fetchWeather(daysData) {
-            // API 網址
             const urlBase = "https://api.open-meteo.com/v1/forecast?daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FTokyo&forecast_days=16";
             const urls = {
                 Tokyo: `${urlBase}&latitude=${coords.Tokyo.lat}&longitude=${coords.Tokyo.long}`,
@@ -140,26 +156,20 @@
             };
 
             try {
-                // 平行抓取
                 const [resTok, resHak] = await Promise.all([fetch(urls.Tokyo), fetch(urls.Hakuba)]);
                 const db = { Tokyo: await resTok.json(), Hakuba: await resHak.json() };
                 
                 document.getElementById('weather-status').innerText = "已更新";
 
-                // 開始填入天氣
                 daysData.forEach(day => {
-                    const cityData = db[day.cityKey]; // 根據 cityKey (Tokyo/Hakuba) 拿資料
+                    const cityData = db[day.cityKey];
                     if (!cityData || !cityData.daily) return;
 
-                    // ★ 暴力比對：把 Sheet 的 "12/21" 轉成 "12-21"
-                    // 然後去 API 的日期列表找有沒有 "12-21" 結尾的
-                    const targetMMDD = day.date.replace('/', '-'); // "12/21" -> "12-21"
-                    
-                    const timeList = cityData.daily.time; // ["2025-12-12", "2025-12-13"...]
+                    const targetMMDD = day.date.replace('/', '-'); 
+                    const timeList = cityData.daily.time; 
                     const matchIndex = timeList.findIndex(t => t.endsWith(targetMMDD));
 
                     if (matchIndex !== -1) {
-                        // 找到了！
                         const min = Math.round(cityData.daily.temperature_2m_min[matchIndex]);
                         const max = Math.round(cityData.daily.temperature_2m_max[matchIndex]);
                         const rain = cityData.daily.precipitation_probability_max[matchIndex];
@@ -170,10 +180,7 @@
                         day.weather.icon = getWeatherIcon(code);
                     }
                 });
-            } catch (e) {
-                console.error("天氣失敗", e);
-                document.getElementById('weather-status').innerText = "天氣載入失敗";
-            }
+            } catch (e) { console.error("天氣失敗", e); }
         }
 
         function getWeatherIcon(code) {
@@ -184,7 +191,6 @@
             return "fa-cloud text-gray-400";
         }
 
-        // 4. 渲染畫面
         function render(data) {
             const wContainer = document.getElementById('weather-container');
             const tContainer = document.getElementById('date-tabs');
@@ -192,15 +198,8 @@
             
             wContainer.innerHTML = ""; tContainer.innerHTML = ""; cContainer.innerHTML = "";
 
-            // 決定預設分頁
-            let activeIdx = 0;
-            const currentTab = document.querySelector('.tab-active');
-            if(currentTab) {
-                const arr = Array.from(tContainer.children); // 這裡還沒生成，邏輯需調整，暫時重置為0
-            }
-
             data.forEach((day, idx) => {
-                // 天氣卡
+                // Weather Card
                 const isSnow = day.weather.icon.includes('snowflake');
                 const bg = isSnow ? 'bg-blue-50 border-blue-200' : 'bg-white border-slate-100';
                 wContainer.innerHTML += `
@@ -211,19 +210,32 @@
                         <span class="text-[10px] text-gray-500">${day.weather.status}</span>
                     </div>`;
 
-                // Tab 按鈕
+                // ★ Tab 按鈕升級：加入星期與備註
+                // 使用 flex-col 讓日期在上面，備註在下面
                 const btn = document.createElement('button');
-                btn.className = `snap-start shrink-0 px-5 py-2 rounded-full text-sm font-medium border border-slate-200 whitespace-nowrap bg-white text-slate-500 transition-all`;
-                btn.innerText = day.date;
+                btn.className = `snap-start shrink-0 px-4 py-1.5 h-auto rounded-xl text-sm border border-slate-200 bg-white text-slate-500 transition-all flex flex-col items-center justify-center min-w-[80px]`;
+                
+                // 組合 HTML：日期 + (星期) + 備註
+                let btnHtml = `<span class="font-bold leading-none mb-1">${day.date} <span class="text-xs font-normal">(${day.dayChar})</span></span>`;
+                
+                if (day.tag) {
+                    // 如果有備註 (如移動日)，顯示一個小標籤
+                    btnHtml += `<span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 rounded-full leading-tight">${day.tag}</span>`;
+                } else {
+                    // 為了版面整齊，沒有備註也可以放一個空白佔位，或者就留白
+                    // btnHtml += `<span class="text-[10px] text-transparent">.</span>`; // 這樣按鈕會等高
+                }
+
+                btn.innerHTML = btnHtml;
                 btn.onclick = () => switchTab(idx);
                 tContainer.appendChild(btn);
 
-                // 內容區塊
+                // Content
                 const content = document.createElement('div');
                 content.id = `day-${idx}`;
                 content.className = `hidden animate-fade-in`;
                 
-                let html = `<h2 class="text-2xl font-bold mb-4">${day.location}</h2><div class="space-y-4">`;
+                let html = `<h2 class="text-2xl font-bold mb-4">${day.location} <span class="text-sm font-normal text-gray-500 ml-2">${day.date} (${day.dayChar})</span></h2><div class="space-y-4">`;
                 day.details.forEach(item => {
                     html += `
                         <div class="flex gap-4 relative pb-6 group">
@@ -246,7 +258,6 @@
                 cContainer.appendChild(content);
             });
 
-            // 啟動第一個分頁
             switchTab(0);
         }
 
@@ -257,11 +268,19 @@
                 if(i===idx) {
                     tabs[i].classList.add('tab-active', 'bg-primary', 'text-white');
                     tabs[i].classList.remove('bg-white', 'text-slate-500');
+                    // 讓標籤變白色
+                    const tagSpan = tabs[i].querySelector('span.bg-slate-100');
+                    if(tagSpan) { tagSpan.classList.remove('bg-slate-100', 'text-slate-600'); tagSpan.classList.add('bg-white/20', 'text-white'); }
+                    
                     contents[i].classList.remove('hidden');
                     tabs[i].scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
                 } else {
                     tabs[i].classList.remove('tab-active', 'bg-primary', 'text-white');
                     tabs[i].classList.add('bg-white', 'text-slate-500');
+                     // 標籤變回灰色
+                    const tagSpan = tabs[i].querySelector('span.bg-white\\/20');
+                    if(tagSpan) { tagSpan.classList.remove('bg-white/20', 'text-white'); tagSpan.classList.add('bg-slate-100', 'text-slate-600'); }
+
                     contents[i].classList.add('hidden');
                 }
             }
@@ -269,16 +288,13 @@
 
         function showModal() { document.getElementById('resort-modal').classList.remove('hidden'); }
 
-        // 初始化
         (async () => {
             const data = await fetchSheetData();
             if(data.length > 0) {
-                render(data); // 先顯示行程
-                await fetchWeather(data); // 抓完天氣
-                render(data); // 再更新一次畫面
+                render(data); 
+                await fetchWeather(data); 
+                render(data); 
             }
-            
-            // 倒數計時
             const target = new Date("2025-12-21T16:00:00").getTime();
             setInterval(() => {
                 const diff = target - new Date().getTime();
