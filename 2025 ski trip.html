@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 Tokyo & Hakuba Ski Trip</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans TC', 'sans-serif'],
+                    },
+                    colors: {
+                        ice: '#f0f9ff',
+                        primary: '#0ea5e9', // Sky blue
+                        dark: '#0f172a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans">
+
+    <header class="relative h-[60vh] min-h-[400px] flex items-center justify-center text-white overflow-hidden">
+        <div class="absolute inset-0 bg-black/40 z-10"></div>
+        <img src="https://images.unsplash.com/photo-1551524559-8af4e6624178?q=80&w=2626&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Ski Background">
+        
+        <div class="relative z-20 text-center px-4">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg">2026 東京白馬滑雪行</h1>
+            <p class="text-xl md:text-2xl mb-8 font-light">Dec 21, 2025 - Jan 4, 2026</p>
+            
+            <div id="countdown" class="grid grid-cols-4 gap-4 max-w-lg mx-auto bg-white/20 p-4 rounded-xl backdrop-blur-sm">
+                <div><span class="text-2xl md:text-3xl font-bold" id="days">00</span><br><span class="text-xs">Days</span></div>
+                <div><span class="text-2xl md:text-3xl font-bold" id="hours">00</span><br><span class="text-xs">Hours</span></div>
+                <div><span class="text-2xl md:text-3xl font-bold" id="minutes">00</span><br><span class="text-xs">Mins</span></div>
+                <div><span class="text-2xl md:text-3xl font-bold" id="seconds">00</span><br><span class="text-xs">Secs</span></div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur shadow-sm py-3 overflow-x-auto">
+        <div class="container mx-auto flex justify-center space-x-2 md:space-x-8 min-w-max px-4">
+            <a href="#accommodation" class="px-4 py-2 rounded-full hover:bg-slate-100 transition"><i class="fas fa-bed mr-2 text-primary"></i>住宿</a>
+            <a href="#resorts" class="px-4 py-2 rounded-full hover:bg-slate-100 transition"><i class="fas fa-snowflake mr-2 text-primary"></i>雪場比較</a>
+            <a href="#itinerary" class="px-4 py-2 rounded-full hover:bg-slate-100 transition"><i class="fas fa-list-ul mr-2 text-primary"></i>每日行程</a>
+            <a href="#info" class="px-4 py-2 rounded-full hover:bg-slate-100 transition"><i class="fas fa-info-circle mr-2 text-primary"></i>實用資訊</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-12 max-w-4xl">
+
+        <section id="accommodation" class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="w-2 h-8 bg-primary mr-3 rounded"></span>住宿安排</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
+                    <div class="text-xs font-bold text-primary uppercase tracking-wider mb-1">東京前期 12/21-24</div>
+                    <h3 class="text-xl font-bold mb-2">remm Akihabara</h3>
+                    <p class="text-gray-500 text-sm"><i class="fas fa-map-marker-alt mr-1"></i> 東京秋葉原</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
+                    <div class="text-xs font-bold text-primary uppercase tracking-wider mb-1">白馬過渡 12/25-26</div>
+                    <h3 class="text-xl font-bold mb-2">Keimichi Guest House</h3>
+                    <p class="text-gray-500 text-sm"><i class="fas fa-map-marker-alt mr-1"></i> 白馬中繼站</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 md:col-span-2 border-l-4 border-l-primary">
+                    <div class="text-xs font-bold text-primary uppercase tracking-wider mb-1">白馬基地 12/27 - 1/2</div>
+                    <h3 class="text-xl font-bold mb-2">HopeTree (或 SKY NEW)</h3>
+                    <p class="text-gray-500 text-sm mb-2"><i class="fas fa-map-marker-alt mr-1"></i> 五龍滑雪場附近</p>
+                    <p class="text-sm bg-slate-50 p-2 rounded">特色：台灣老闆、有洗衣機、代收雪具。 <br>預算：約 $24,120 台幣 (6晚)</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 md:col-span-2">
+                    <div class="text-xs font-bold text-primary uppercase tracking-wider mb-1">東京回程 1/3</div>
+                    <h3 class="text-xl font-bold mb-2">京急EX INN 東京濱松町大門站前</h3>
+                    <p class="text-gray-500 text-sm"><i class="fas fa-map-marker-alt mr-1"></i> 濱松町大門</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="resorts" class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="w-2 h-8 bg-primary mr-3 rounded"></span>白馬雪場攻略</h2>
+            <div class="overflow-x-auto rounded-xl shadow-sm border border-slate-200">
+                <table class="w-full text-left text-sm whitespace-nowrap md:whitespace-normal">
+                    <thead class="bg-slate-100 text-slate-600 uppercase">
+                        <tr>
+                            <th class="p-4">雪場名稱</th>
+                            <th class="p-4">適合對象</th>
+                            <th class="p-4">特色</th>
+                            <th class="p-4">備註</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 bg-white">
+                        <tr>
+                            <td class="p-4 font-bold">Sanosaka (佐野坂)</td>
+                            <td class="p-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">練習/放鬆</span></td>
+                            <td class="p-4">人少、面向青木湖絕美景色</td>
+                            <td class="p-4 text-gray-500">躲人潮首選</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-bold">Tsugaike (栂池)</td>
+                            <td class="p-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">初學者/暖身</span></td>
+                            <td class="p-4">雪道超寬闊、50%初級道</td>
+                            <td class="p-4 text-gray-500">本季無夜滑</td>
+                        </tr>
+                        <tr class="bg-blue-50/50">
+                            <td class="p-4 font-bold">Goryu (五龍)</td>
+                            <td class="p-4"><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">綜合/基地</span></td>
+                            <td class="p-4">有夜滑 (18:00-21:30)、連接Hakuba47</td>
+                            <td class="p-4 text-gray-500">週末人多，已買二日券</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-bold">Iwatake (岩岳)</td>
+                            <td class="p-4"><span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">拍照/觀光</span></td>
+                            <td class="p-4">360度絕景、網美鞦韆、Mountain Harbor</td>
+                            <td class="p-4 text-gray-500">適合一日遊</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-bold">Happo-One (八方)</td>
+                            <td class="p-4"><span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">高手/Carving</span></td>
+                            <td class="p-4">落差1000m、奧運場地</td>
+                            <td class="p-4 text-gray-500">纜車排隊久、難度較高</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="itinerary" class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="w-2 h-8 bg-primary mr-3 rounded"></span>每日詳細行程</h2>
+            <div class="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-300 before:to-transparent">
+                
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-slate-200 group-[.is-active]:bg-primary group-[.is-active]:text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 text-xs font-bold">
+                        12/21
+                    </div>
+                    <div class="w-[calc(100%-4rem)] md:w-[45%] p-4 bg-white rounded-xl shadow-sm border border-slate-100">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-bold text-lg text-slate-800">抵達東京</span>
+                            <span class="text-xs bg-slate-100 px-2 py-1 rounded">週日</span>
+                        </div>
+                        <ul class="text-sm space-y-1 text-gray-600">
+                            <li><i class="fas fa-plane-arrival w-5 text-center"></i> 16:50-20:40 落地</li>
+                            <li><i class="fas fa-h-square w-5 text-center"></i> remm Akihabara</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-slate-200 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 text-xs font-bold">12/22</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[45%] p-4 bg-white rounded-xl shadow-sm border border-slate-100">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-bold text-lg text-slate-800">採買雪具</span>
+                            <span class="text-xs bg-slate-100 px-2 py-1 rounded">週一</span>
+                        </div>
+                        <ul class="text-sm space-y-1 text-gray-600">
+                            <li><i class="fas fa-shopping-bag w-5 text-center"></i> 御茶水買雪具</li>
+                            <li><i class="fas fa-utensils w-5 text-center"></i> 午餐：海老丸拉麵</li>
+                        </ul>
+                        <a href="https://maps.app.goo.gl/placeholder" target="_blank" class="mt-3 inline-block text-xs text-primary hover:underline"><i class="fas fa-map-marked-alt"></i> 海老丸拉麵導航</a>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-slate-200 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 text-xs font-bold">12/24</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[45%] p-4 bg-white rounded-xl shadow-sm border border-slate-100">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-bold text-lg text-slate-800">東京活動 & 合流</span>
+                            <span class="text-xs bg-slate-100 px-2 py-1 rounded">週三</span>
+                        </div>
+                        <p class="text-sm text-gray-700 mb-2">哈利波特影城 / TeamLab</p>
+                        <div class="bg-yellow-50 p-2 rounded text-xs text-gray-600 border border-yellow-100">
+                            <i class="fas fa-user-friends"></i> Ashley, Elliott, KK, 豆漿 抵達
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-slate-200 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 text-xs font-bold">12/25</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[45%] p-4 bg-white rounded-xl shadow-sm border border-slate-100">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-bold text-lg text-slate-800">前往白馬</span>
+                            <span class="text-xs bg-slate-100 px-2 py-1 rounded">週四</span>
+                        </div>
+                        <ul class="text-sm space-y-1 text-gray-600">
+                            <li><i class="fas fa-train w-5 text-center"></i> 11:46 新幹線 (上野-高崎)</li>
+                            <li><i class="fas fa-car w-5 text-center"></i> 12:30 高崎領車 -> 白馬 (3hr)</li>
+                            <li><i class="fas fa-coffee w-5 text-center"></i> 途經 Cafe AO</li>
+                        </ul>
+                        <div class="mt-2 text-xs text-gray-400">住：Keimichi Guest House</div>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-primary text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 text-xs font-bold">12/26</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[45%] p-4 bg-blue-50/80 rounded-xl shadow-sm border border-blue-100">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-bold text-lg text-blue-900">SANOSAKA 滑雪</span>
+                            <span class="text-xs bg-white px-2 py-1 rounded text-blue-800">週五</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">面向青木湖，適合放鬆與躲人潮。</p>
+                        <div class="bg-white/60 p-2 rounded text-xs text-gray-600">
+                            <i class="fas fa-info-circle"></i> Angus 22:15 抵達羽田
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-slate-200 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 text-xs font-bold">12/27</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[45%] p-4 bg-white rounded-xl shadow-sm border border-slate-100">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-bold text-lg text-slate-800">全員集合 & 入住</span>
+                            <span class="text-xs bg-slate-100 px-2 py-1 rounded">週六</span>
+                        </div>
+                        <ul class="text-sm space-y-1 text-gray-600">
+                            <li><i class="fas fa-car w-5 text-center"></i> 東京組 -> 白馬</li>
+                            <li><i class="fas fa-home w-5 text-center"></i> 入住 HopeTree</li>
+                            <li><i class="fas fa-utensils w-5 text-center"></i> 晚餐：胡座屋 (關東煮)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-primary text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 text-xs font-bold">12/28</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[45%] p-4 bg-blue-50/80 rounded-xl shadow-sm border border-blue-100">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-bold text-lg text-blue-900">栂池 (Tsugaike)</span>
+                            <span class="text-xs bg-white px-2 py-1 rounded text-blue-800">週日</span>
+                        </div>
+                        <p class="text-sm text-gray-600">暖腳日！寬大綠道適合初學。</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-primary text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 text-xs font-bold">12/29</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[45%] p-4 bg-blue-50/80 rounded-xl shadow-sm border border-blue-100">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-bold text-lg text-blue-900">五龍 (Goryu) + 夜滑</span>
+                            <span class="text-xs bg-white px-2 py-1 rounded text-blue-800">週一</span>
+                        </div>
+                        <p class="text-sm text-gray-600">基地滑雪日。夜滑 18:00～21:30。</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-primary text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 text-xs font-bold">12/30</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[45%] p-4 bg-blue-50/80 rounded-xl shadow-sm border border-blue-100">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-bold text-lg text-blue-900">岩岳 (Iwatake)</span>
+                            <span class="text-xs bg-white px-2 py-1 rounded text-blue-800">週二</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">必去 Mountain Harbor 拍照。</p>
+                        <div class="text-sm text-gray-600 border-t border-blue-200 pt-2 mt-2">
+                            <i class="fas fa-utensils text-orange-400"></i> 晚餐：Nijiya Donmaru (生魚片)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-purple-600 text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 text-xs font-bold">12/31</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[45%] p-4 bg-purple-50 rounded-xl shadow-sm border border-purple-100">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-bold text-lg text-purple-900">五龍 跨年滑雪</span>
+                            <span class="text-xs bg-white px-2 py-1 rounded text-purple-800">週三</span>
+                        </div>
+                        <p class="text-sm text-gray-600">Prepare for 2026!</p>
+                    </div>
+                </div>
+
+                 <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-primary text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 text-xs font-bold">1/1</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[45%] p-4 bg-blue-50/80 rounded-xl shadow-sm border border-blue-100">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-bold text-lg text-blue-900">岩岳 (Iwatake)</span>
+                            <span class="text-xs bg-white px-2 py-1 rounded text-blue-800">週四</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">新年第一滑。</p>
+                         <div class="text-sm text-gray-600 border-t border-blue-200 pt-2 mt-2">
+                            <i class="fas fa-hamburger text-orange-400"></i> 午餐：Yuki Burger
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-primary text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 text-xs font-bold">1/2</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[45%] p-4 bg-blue-50/80 rounded-xl shadow-sm border border-blue-100">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-bold text-lg text-blue-900">八方 Or 五龍</span>
+                            <span class="text-xs bg-white px-2 py-1 rounded text-blue-800">週五</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">最後一天衝刺。</p>
+                        <div class="text-sm text-gray-600 border-t border-blue-200 pt-2 mt-2">
+                            <i class="fas fa-fire text-orange-400"></i> 晚餐：Marukame (燒肉)
+                        </div>
+                    </div>
+                </div>
+
+                 <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-slate-200 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 text-xs font-bold">1/3</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[45%] p-4 bg-white rounded-xl shadow-sm border border-slate-100">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-bold text-lg text-slate-800">返回東京</span>
+                            <span class="text-xs bg-slate-100 px-2 py-1 rounded">週六</span>
+                        </div>
+                        <ul class="text-sm space-y-1 text-gray-600">
+                            <li><i class="fas fa-car w-5"></i> 10:30 還車</li>
+                            <li><i class="fas fa-h-square w-5"></i> 住：京急EX INN</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="info" class="mb-16 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+             <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="w-2 h-8 bg-primary mr-3 rounded"></span>其他備註</h2>
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="font-bold text-lg mb-3">💰 預算/費用筆記</h3>
+                    <ul class="list-disc pl-5 space-y-2 text-sm text-gray-600">
+                        <li><strong>住宿 (HopeTree):</strong> 約 $24,120 台幣/人 (6晚)</li>
+                        <li><strong>雪票:</strong> 五龍/47 二日票 ¥14,500 (部分成員已預購)</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-3">🍴 餐廳口袋名單</h3>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li class="flex items-center justify-between border-b pb-1">
+                            <span>胡座屋 (關東煮)</span> 
+                            <a href="#" class="text-primary hover:text-blue-700"><i class="fas fa-map-marker-alt"></i></a>
+                        </li>
+                        <li class="flex items-center justify-between border-b pb-1">
+                            <span>Nijiya Donmaru (生魚片)</span> 
+                            <a href="#" class="text-primary hover:text-blue-700"><i class="fas fa-map-marker-alt"></i></a>
+                        </li>
+                        <li class="flex items-center justify-between border-b pb-1">
+                            <span>Yuki Burger (漢堡)</span> 
+                            <a href="#" class="text-primary hover:text-blue-700"><i class="fas fa-map-marker-alt"></i></a>
+                        </li>
+                        <li class="flex items-center justify-between border-b pb-1">
+                            <span>Marukame (燒肉)</span> 
+                            <a href="#" class="text-primary hover:text-blue-700"><i class="fas fa-map-marker-alt"></i></a>
+                        </li>
+                    </ul>
+                </div>
+             </div>
+        </section>
+
+        <section class="h-[400px] w-full bg-slate-200 rounded-xl overflow-hidden relative">
+            <div class="absolute inset-0 flex items-center justify-center text-gray-500">
+                <p class="text-center">在此處貼上你的 Google Maps Embed Iframe 程式碼<br> (Section 5)</p>
+            </div>
+            </section>
+
+        <footer class="mt-20 py-8 text-center text-gray-400 text-sm">
+            <p>2026 Tokyo & Hakuba Ski Trip • Created with Vibe Coding</p>
+        </footer>
+
+    </main>
+
+    <script>
+        // 倒數計時邏輯
+        const targetDate = new Date("December 21, 2025 16:50:00").getTime();
+
+        const timer = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerText = days < 10 ? "0" + days : days;
+            document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
+            document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
+            document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
+
+            if (distance < 0) {
+                clearInterval(timer);
+                document.getElementById("countdown").innerHTML = "LET'S SKI!";
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
