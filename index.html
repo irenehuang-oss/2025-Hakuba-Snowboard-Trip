@@ -9,249 +9,228 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Noto Sans TC', 'sans-serif'] },
-                    colors: {
-                        ice: '#f0f9ff',
-                        primary: '#0ea5e9',
-                        dark: '#0f172a',
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        /* 隱藏捲軸但保持功能 (美觀用) */
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-        }
-        
-        /* 選中日期的樣式 */
-        .tab-active {
-            background-color: #0ea5e9; /* primary color */
-            color: white;
-            box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.4);
-            transform: scale(1.05);
-        }
-    </style>
-</head>
-<body class="bg-slate-100 text-slate-800 font-sans pb-20">
+        // --- 設定：你的行程日期與地點 ---
+        // 為了讓天氣抓得準，我們需要定義每一天是在 "Tokyo" 還是 "Hakuba"
+        const locationMap = {
+            "12/21": "Tokyo", "12/22": "Tokyo", "12/23": "Tokyo", "12/24": "Tokyo",
+            "12/25": "Hakuba", "12/26": "Hakuba", "12/27": "Hakuba", "12/28": "Hakuba", 
+            "12/29": "Hakuba", "12/30": "Hakuba", "12/31": "Hakuba", "1/1": "Hakuba", 
+            "1/2": "Hakuba", "1/3": "Tokyo", "1/4": "Tokyo"
+        };
 
-    <header class="relative h-[25vh] min-h-[200px] flex flex-col items-center justify-center text-white overflow-hidden bg-slate-900">
-        <img src="https://images.unsplash.com/photo-1551524559-8af4e6624178?q=80&w=2626&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-60" alt="Background">
-        <div class="relative z-10 text-center px-4 mt-4">
-            <h1 class="text-2xl md:text-4xl font-bold drop-shadow-lg">2026 東京白馬滑雪</h1>
-            <div id="countdown" class="mt-2 text-sm md:text-base font-mono bg-black/30 px-3 py-1 rounded-full inline-block backdrop-blur-sm">
-                倒數 <span id="days">00</span> 天 <span id="hours">00</span> 時
-            </div>
-        </div>
-    </header>
+        // 座標設定
+        const coords = {
+            Tokyo: { lat: 35.6895, long: 139.6917 },
+            Hakuba: { lat: 36.6982, long: 137.8619 }
+        };
 
-    <section class="relative -mt-8 mb-6 z-20 px-4">
-        <div class="bg-white rounded-xl shadow-lg p-4 overflow-hidden">
-            <h3 class="text-xs font-bold text-gray-400 uppercase mb-3 flex items-center">
-                <i class="fas fa-cloud-sun mr-2"></i> 當地預報 (長野/東京)
-            </h3>
-            <div class="flex overflow-x-auto gap-3 pb-2 hide-scrollbar snap-x" id="weather-container">
-                </div>
-        </div>
-    </section>
-
-    <nav class="sticky top-0 z-40 bg-slate-100/95 backdrop-blur-md border-b border-slate-200 shadow-sm py-3">
-        <div class="px-4">
-            <div class="flex overflow-x-auto gap-3 hide-scrollbar snap-x py-1" id="date-tabs">
-                </div>
-        </div>
-    </nav>
-
-    <main class="container mx-auto px-4 py-6 max-w-2xl min-h-[50vh]" id="itinerary-content">
-        </main>
-
-    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around py-3 z-50 text-xs text-gray-500 safe-area-bottom">
-        <a href="#" onclick="showResortInfo(); return false;" class="flex flex-col items-center hover:text-primary">
-            <i class="fas fa-snowflake text-lg mb-1"></i>
-            <span>雪場資訊</span>
-        </a>
-        <a href="#" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex flex-col items-center hover:text-primary text-primary">
-            <i class="fas fa-calendar-alt text-lg mb-1"></i>
-            <span>每日行程</span>
-        </a>
-        <a href="https://maps.google.com" target="_blank" class="flex flex-col items-center hover:text-primary">
-            <i class="fas fa-map-marked-alt text-lg mb-1"></i>
-            <span>導航</span>
-        </a>
-    </div>
-
-    <div id="resort-modal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl w-full max-w-md max-h-[80vh] overflow-y-auto p-6 relative">
-            <button onclick="document.getElementById('resort-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800">
-                <i class="fas fa-times text-xl"></i>
-            </button>
-            <h2 class="text-xl font-bold mb-4">雪場快速比較</h2>
-            <div class="space-y-4">
-                <div class="border-b pb-2">
-                    <h3 class="font-bold text-primary">Sanosaka (佐野坂)</h3>
-                    <p class="text-sm text-gray-600">人少、面湖景、適合練習。</p>
-                </div>
-                <div class="border-b pb-2">
-                    <h3 class="font-bold text-primary">Tsugaike (栂池)</h3>
-                    <p class="text-sm text-gray-600">超寬綠道、新手天堂、無夜滑。</p>
-                </div>
-                <div class="border-b pb-2">
-                    <h3 class="font-bold text-primary">Goryu (五龍)</h3>
-                    <p class="text-sm text-gray-600">有夜滑、地形豐富、住宿基地。</p>
-                </div>
-                <div>
-                    <h3 class="font-bold text-primary">Happo-One (八方)</h3>
-                    <p class="text-sm text-gray-600">奧運場地、難度高、高手向。</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // --- DATA: 行程資料庫 (在這裡修改內容) ---
-        const tripData = [
+        // --- DATA: 行程資料庫 ---
+        let tripData = [
             {
                 date: "12/21", day: "週日", location: "東京", 
-                weather: { icon: "fa-plane", temp: "8°C", status: "多雲" },
+                weather: { icon: "fa-plane", temp: "預報中...", status: "Loading", rain: "" },
                 details: [
                     { time: "16:50", title: "抵達東京成田", icon: "fa-plane-arrival", desc: "領行李、買西瓜卡" },
-                    { time: "19:00", title: "前往市區", icon: "fa-train", desc: "Skyliner 前往上野/秋葉原" },
-                    { time: "20:30", title: "入住飯店", icon: "fa-bed", desc: "remm Akihabara (秋葉原)" }
+                    { time: "20:30", title: "入住 remm Akihabara", icon: "fa-bed", desc: "秋葉原" }
                 ]
             },
             {
                 date: "12/22", day: "週一", location: "東京",
-                weather: { icon: "fa-sun", temp: "10°C", status: "晴朗" },
+                weather: { icon: "fa-sun", temp: "預報中...", status: "Loading", rain: "" },
                 details: [
                     { time: "10:00", title: "御茶水買雪具", icon: "fa-shopping-bag", desc: "逛 Victoria, London Sports" },
-                    { time: "12:30", title: "午餐：海老丸拉麵", icon: "fa-utensils", desc: "龍蝦湯頭拉麵 (需排隊)", link: "https://maps.app.goo.gl/placeholder" },
-                    { time: "15:00", title: "自由逛街", icon: "fa-walking", desc: "秋葉原電器街" }
+                    { time: "12:30", title: "午餐：海老丸拉麵", icon: "fa-utensils", desc: "龍蝦湯頭拉麵", link: "https://maps.app.goo.gl/placeholder" }
                 ]
             },
             {
                 date: "12/23", day: "週二", location: "東京",
-                weather: { icon: "fa-cloud", temp: "9°C", status: "陰天" },
-                details: [
-                    { time: "All Day", title: "自由活動", icon: "fa-user-clock", desc: "建議：澀谷 Sky 或 明治神宮" }
-                ]
+                weather: { icon: "fa-cloud", temp: "預報中...", status: "Loading", rain: "" },
+                details: [ { time: "All Day", title: "自由活動", icon: "fa-user-clock", desc: "建議：澀谷 Sky 或 明治神宮" } ]
             },
             {
                 date: "12/24", day: "週三", location: "東京",
-                weather: { icon: "fa-star", temp: "7°C", status: "聖誕夜" },
+                weather: { icon: "fa-star", temp: "預報中...", status: "Loading", rain: "" },
                 details: [
                     { time: "09:00", title: "哈利波特影城", icon: "fa-magic", desc: "豐島園站西南" },
-                    { time: "16:00", title: "TeamLab", icon: "fa-lightbulb", desc: "數位藝術展" },
                     { time: "18:00", title: "成員會合", icon: "fa-users", desc: "Ashley/Elliott, KK/豆漿 抵達" }
                 ]
             },
             {
                 date: "12/25", day: "週四", location: "移動日",
-                weather: { icon: "fa-car", temp: "2°C", status: "降溫" },
+                weather: { icon: "fa-car", temp: "預報中...", status: "Loading", rain: "" },
                 details: [
-                    { time: "11:46", title: "新幹線", icon: "fa-train", desc: "上野 -> 高崎" },
-                    { time: "12:30", title: "高崎領車", icon: "fa-car", desc: "檢查雪胎、保險" },
-                    { time: "14:00", title: "Cafe AO", icon: "fa-coffee", desc: "中途休息" },
-                    { time: "17:00", title: "抵達白馬", icon: "fa-map-pin", desc: "住：Keimichi Guest House" }
+                    { time: "11:46", title: "新幹線往高崎", icon: "fa-train", desc: "上野 -> 高崎" },
+                    { time: "12:30", title: "高崎領車", icon: "fa-car", desc: "自駕前往白馬 (3hr)" },
+                    { time: "17:00", title: "住：Keimichi", icon: "fa-home", desc: "Guest House Check-in" }
                 ]
             },
             {
-                date: "12/26", day: "週五", location: "白馬",
-                weather: { icon: "fa-snowflake", temp: "-3°C", status: "小雪" },
+                date: "12/26", day: "週五", location: "白馬 Sanosaka",
+                weather: { icon: "fa-snowflake", temp: "預報中...", status: "Loading", rain: "" },
                 details: [
                     { time: "09:00", title: "Sanosaka 滑雪", icon: "fa-skiing", desc: "熱身日，躲人潮" },
-                    { time: "18:00", title: "晚餐", icon: "fa-utensils", desc: "超市採買或附近餐廳" },
-                    { time: "22:15", title: "接機", icon: "fa-car", desc: "Angus 抵達羽田，深夜移動" }
+                    { time: "22:15", title: "接機", icon: "fa-car", desc: "Angus 抵達羽田" }
                 ]
             },
             {
-                date: "12/27", day: "週六", location: "白馬",
-                weather: { icon: "fa-snowflake", temp: "-5°C", status: "大雪" },
+                date: "12/27", day: "週六", location: "白馬 HopeTree",
+                weather: { icon: "fa-snowflake", temp: "預報中...", status: "Loading", rain: "" },
                 details: [
                     { time: "08:30", title: "全員集合", icon: "fa-users", desc: "ao lakeside cafe 接人" },
-                    { time: "15:00", title: "更換住宿", icon: "fa-suitcase", desc: "Check-in: HopeTree" },
-                    { time: "18:00", title: "晚餐：胡座屋", icon: "fa-utensils", desc: "知名關東煮 (需預約)" }
+                    { time: "15:00", title: "Check-in: HopeTree", icon: "fa-suitcase", desc: "更換住宿" },
+                    { time: "18:00", title: "晚餐：胡座屋", icon: "fa-utensils", desc: "關東煮" }
                 ]
             },
             {
                 date: "12/28", day: "週日", location: "栂池",
-                weather: { icon: "fa-snowflake", temp: "-4°C", status: "粉雪" },
-                details: [
-                    { time: "09:00", title: "栂池 (Tsugaike)", icon: "fa-skiing", desc: "寬闊綠道，適合練功" },
-                    { time: "Note", title: "無夜滑", icon: "fa-exclamation-circle", desc: "傍晚早點休息" }
-                ]
+                weather: { icon: "fa-snowflake", temp: "預報中...", status: "Loading", rain: "" },
+                details: [ { time: "09:00", title: "栂池 (Tsugaike)", icon: "fa-skiing", desc: "寬闊綠道，無夜滑" } ]
             },
             {
                 date: "12/29", day: "週一", location: "五龍",
-                weather: { icon: "fa-moon", temp: "-6°C", status: "夜滑" },
-                details: [
-                    { time: "10:00", title: "五龍 (Goryu)", icon: "fa-skiing", desc: "連通 Hakuba47" },
-                    { time: "18:00", title: "夜滑開始", icon: "fa-snowflake", desc: "至 21:30" }
-                ]
+                weather: { icon: "fa-moon", temp: "預報中...", status: "Loading", rain: "" },
+                details: [ { time: "10:00", title: "五龍 (Goryu)", icon: "fa-skiing", desc: "連通 Hakuba47" }, { time: "18:00", title: "夜滑", icon: "fa-snowflake", desc: "至 21:30" } ]
             },
             {
                 date: "12/30", day: "週二", location: "岩岳",
-                weather: { icon: "fa-camera", temp: "-2°C", status: "多雲" },
+                weather: { icon: "fa-camera", temp: "預報中...", status: "Loading", rain: "" },
                 details: [
                     { time: "09:00", title: "岩岳 (Iwatake)", icon: "fa-skiing", desc: "360度美景" },
-                    { time: "12:00", title: "Mountain Harbor", icon: "fa-coffee", desc: "網美看台喝咖啡" },
-                    { time: "18:00", title: "晚餐：Donmaru", icon: "fa-fish", desc: "便宜大碗生魚片飯" }
+                    { time: "18:00", title: "晚餐：Donmaru", icon: "fa-fish", desc: "生魚片飯" }
                 ]
             },
             {
-                date: "12/31", day: "週三", location: "五龍",
-                weather: { icon: "fa-glass-cheers", temp: "-5°C", status: "跨年" },
-                details: [
-                    { time: "All Day", title: "五龍滑雪", icon: "fa-skiing", desc: "跨年滑走！" },
-                    { time: "23:59", title: "跨年倒數", icon: "fa-fireworks", desc: "Happy New Year 2026!" }
-                ]
+                date: "12/31", day: "週三", location: "五龍 跨年",
+                weather: { icon: "fa-glass-cheers", temp: "預報中...", status: "Loading", rain: "" },
+                details: [ { time: "All Day", title: "五龍滑雪", icon: "fa-skiing", desc: "Happy New Year!" } ]
             },
             {
-                date: "1/1", day: "週四", location: "岩岳",
-                weather: { icon: "fa-sun", temp: "-1°C", status: "元旦" },
-                details: [
-                    { time: "09:00", title: "新年首滑", icon: "fa-skiing", desc: "岩岳 Iwatake" },
-                    { time: "12:00", title: "午餐：Yuki Burger", icon: "fa-hamburger", desc: "好吃的漢堡" }
-                ]
+                date: "1/1", day: "週四", location: "岩岳 新年",
+                weather: { icon: "fa-sun", temp: "預報中...", status: "Loading", rain: "" },
+                details: [ { time: "09:00", title: "新年首滑", icon: "fa-skiing", desc: "岩岳 Iwatake" }, { time: "12:00", title: "Yuki Burger", icon: "fa-hamburger", desc: "午餐" } ]
             },
             {
                 date: "1/2", day: "週五", location: "八方",
-                weather: { icon: "fa-mountain", temp: "-4°C", status: "雪" },
-                details: [
-                    { time: "09:00", title: "八方尾根", icon: "fa-skiing", desc: "挑戰奧運滑道 (或回五龍)" },
-                    { time: "18:00", title: "最後晚餐", icon: "fa-drumstick-bite", desc: "Marukame 燒肉" }
-                ]
+                weather: { icon: "fa-mountain", temp: "預報中...", status: "Loading", rain: "" },
+                details: [ { time: "09:00", title: "八方尾根", icon: "fa-skiing", desc: "挑戰奧運滑道" }, { time: "18:00", title: "Marukame", icon: "fa-fire", desc: "最後晚餐：燒肉" } ]
             },
             {
-                date: "1/3", day: "週六", location: "回程",
-                weather: { icon: "fa-car", temp: "5°C", status: "晴" },
-                details: [
-                    { time: "10:30", title: "還車", icon: "fa-car", desc: "整理行李，返回東京" },
-                    { time: "15:00", title: "入住", icon: "fa-hotel", desc: "京急EX INN 濱松町" }
-                ]
+                date: "1/3", day: "週六", location: "回東京",
+                weather: { icon: "fa-car", temp: "預報中...", status: "Loading", rain: "" },
+                details: [ { time: "10:30", title: "還車", icon: "fa-car", desc: "返回東京" }, { time: "15:00", title: "入住", icon: "fa-hotel", desc: "京急EX INN 濱松町" } ]
             },
              {
                 date: "1/4", day: "週日", location: "返台",
-                weather: { icon: "fa-plane-departure", temp: "9°C", status: "晴" },
-                details: [
-                    { time: "09:20", title: "前往機場", icon: "fa-plane", desc: "各自搭機返台" }
-                ]
+                weather: { icon: "fa-plane-departure", temp: "預報中...", status: "Loading", rain: "" },
+                details: [ { time: "09:20", title: "前往機場", icon: "fa-plane", desc: "各自搭機返台" } ]
             }
         ];
 
-        // --- RENDER FUNCTION: 產生畫面 ---
+        // --- 天氣 API 核心邏輯 ---
+        async function fetchWeather() {
+            // 抓取今天的日期
+            const today = new Date();
+            const year = today.getFullYear();
+            
+            // 定義要抓取的 API 網址 (Tokyo & Hakuba)
+            // Open-Meteo 免費 API: 抓取未來 16 天預報
+            const urls = {
+                Tokyo: `https://api.open-meteo.com/v1/forecast?latitude=${coords.Tokyo.lat}&longitude=${coords.Tokyo.long}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FTokyo`,
+                Hakuba: `https://api.open-meteo.com/v1/forecast?latitude=${coords.Hakuba.lat}&longitude=${coords.Hakuba.long}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FTokyo`
+            };
+
+            try {
+                // 平行抓取兩個地點的資料
+                const [tokyoRes, hakubaRes] = await Promise.all([
+                    fetch(urls.Tokyo),
+                    fetch(urls.Hakuba)
+                ]);
+                
+                const tokyoData = await tokyoRes.json();
+                const hakubaData = await hakubaRes.json();
+                
+                // 整理資料庫
+                const weatherDB = {
+                    Tokyo: tokyoData.daily,
+                    Hakuba: hakubaData.daily
+                };
+
+                // 更新 tripData
+                tripData.forEach(day => {
+                    const loc = locationMap[day.date]; // 找出這一天是在東京還是白馬
+                    if (!loc || !weatherDB[loc]) return;
+
+                    // 找出日期對應的 Index
+                    // 我們需要將 "12/21" 轉換成 "2025-12-21" 格式來比對
+                    // 注意：這裡假設行程是今年底(2025)到明年初(2026)
+                    let currentYear = (day.date.startsWith("1/")) ? year + 1 : year; 
+                    // 如果現在是 12月，那1月就是明年。如果現在是1月，那12月是去年(不考慮)。
+                    // 修正：直接用目前的年份判斷，因為您現在是 2025 Dec。
+                    if (today.getMonth() === 11 && day.date.startsWith("1/")) {
+                         currentYear = year + 1;
+                    }
+
+                    const dateStr = `${currentYear}-${day.date.split('/')[0].padStart(2, '0')}-${day.date.split('/')[1].padStart(2, '0')}`;
+                    
+                    // 在 API 回傳的時間列表中尋找這一天
+                    const index = weatherDB[loc].time.indexOf(dateStr);
+
+                    if (index !== -1) {
+                        // 找到了！更新資料
+                        const minT = Math.round(weatherDB[loc].temperature_2m_min[index]);
+                        const maxT = Math.round(weatherDB[loc].temperature_2m_max[index]);
+                        const rainProb = weatherDB[loc].precipitation_probability_max[index];
+                        const code = weatherDB[loc].weathercode[index];
+
+                        day.weather.temp = `${minT}° ~ ${maxT}°`;
+                        day.weather.rain = `<i class="fas fa-umbrella text-blue-400"></i> ${rainProb}%`;
+                        day.weather.icon = getWeatherIcon(code);
+                        day.weather.status = getWeatherDesc(code);
+                    } else {
+                        day.weather.temp = "N/A";
+                        day.weather.status = "尚無預報";
+                    }
+                });
+
+                // 資料更新完畢，重新渲染畫面
+                renderApp();
+
+            } catch (error) {
+                console.error("天氣抓取失敗:", error);
+                // 失敗時保持預設值或顯示錯誤
+            }
+        }
+
+        // WMO Weather Code 轉換圖示
+        function getWeatherIcon(code) {
+            if (code <= 1) return "fa-sun text-orange-400"; // 晴
+            if (code <= 3) return "fa-cloud-sun text-gray-400"; // 多雲
+            if (code <= 48) return "fa-smog text-gray-400"; // 霧
+            if (code <= 67) return "fa-cloud-rain text-blue-400"; // 雨
+            if (code <= 77) return "fa-snowflake text-cyan-300"; // 雪
+            if (code <= 82) return "fa-cloud-showers-heavy text-blue-600"; // 大雨
+            if (code <= 86) return "fa-snowflake text-white"; // 大雪
+            return "fa-cloud";
+        }
+        
+        function getWeatherDesc(code) {
+            if (code <= 1) return "晴朗";
+            if (code <= 3) return "多雲";
+            if (code <= 67) return "有雨";
+            if (code <= 77) return "降雪";
+            if (code <= 86) return "大雪";
+            return "陰天";
+        }
+
+        // --- RENDER FUNCTION: 產生畫面 (與之前相同，但加入天氣顯示) ---
         function renderApp() {
             const weatherContainer = document.getElementById('weather-container');
             const tabsContainer = document.getElementById('date-tabs');
             const contentContainer = document.getElementById('itinerary-content');
+
+            // 記住目前選中的 Tab (如果有的話)，避免重整時跳掉
+            const activeIndex = document.querySelector('.tab-active') ? 
+                Array.from(document.getElementById('date-tabs').children).indexOf(document.querySelector('.tab-active')) : 0;
 
             weatherContainer.innerHTML = '';
             tabsContainer.innerHTML = '';
@@ -259,85 +238,80 @@
 
             tripData.forEach((day, index) => {
                 // 1. 產生天氣卡片
+                // 檢查是否為特殊天氣 (雪/雨) 來改變卡片背景
+                const isSnow = day.weather.icon.includes('snowflake');
+                const cardBg = isSnow ? 'bg-blue-100 border-blue-200' : 'bg-white border-blue-50';
+
                 const weatherCard = `
-                    <div class="snap-start shrink-0 w-24 bg-blue-50 rounded-lg p-3 flex flex-col items-center justify-center border border-blue-100">
-                        <span class="text-xs text-gray-500 mb-1">${day.date}</span>
-                        <i class="fas ${day.weather.icon} text-xl text-primary mb-1"></i>
-                        <span class="font-bold text-slate-700">${day.weather.temp}</span>
-                        <span class="text-[10px] text-gray-400">${day.weather.status}</span>
+                    <div class="snap-start shrink-0 w-28 ${cardBg} rounded-lg p-3 flex flex-col items-center justify-center border shadow-sm">
+                        <span class="text-xs text-gray-500 mb-1 font-bold">${day.date} ${day.location}</span>
+                        <i class="fas ${day.weather.icon} text-2xl mb-1"></i>
+                        <span class="font-bold text-slate-700 text-sm">${day.weather.temp}</span>
+                        <span class="text-[10px] text-gray-500 mt-1">${day.weather.rain}</span>
                     </div>
                 `;
                 weatherContainer.innerHTML += weatherCard;
 
-                // 2. 產生日期按鈕 (Tabs)
+                // 2. 產生日期按鈕
                 const tabBtn = document.createElement('button');
-                tabBtn.className = `snap-start shrink-0 px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 border border-slate-200 bg-white text-slate-600 whitespace-nowrap ${index === 0 ? 'tab-active' : ''}`;
+                const isActive = index === activeIndex;
+                tabBtn.className = `snap-start shrink-0 px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 border border-slate-200 whitespace-nowrap ${isActive ? 'tab-active' : 'bg-white text-slate-600'}`;
                 tabBtn.innerHTML = `${day.date} <span class="text-xs opacity-70 ml-1">${day.day}</span>`;
                 tabBtn.onclick = () => switchTab(index);
                 tabsContainer.appendChild(tabBtn);
 
-                // 3. 產生每日行程內容
+                // 3. 產生內容
                 const dayContent = document.createElement('div');
                 dayContent.id = `day-${index}`;
-                dayContent.className = `space-y-4 ${index === 0 ? 'block' : 'hidden'} animate-fade-in`;
+                dayContent.className = `space-y-4 ${isActive ? 'block' : 'hidden'} animate-fade-in`;
                 
-                // 每日標題 Header
                 let contentHTML = `
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-2xl font-bold text-slate-800">${day.location}</h2>
-                        <span class="bg-slate-200 text-slate-600 px-3 py-1 rounded-full text-xs font-bold">${day.date} ${day.day}</span>
+                        <div class="text-right">
+                             <span class="block text-sm font-bold text-primary">${day.weather.temp}</span>
+                             <span class="text-xs text-gray-500">${day.weather.status} ${day.weather.rain}</span>
+                        </div>
                     </div>
                 `;
 
-                // 行程清單 (Timeline 樣式)
                 day.details.forEach(item => {
                     contentHTML += `
                         <div class="flex gap-4 relative pb-6 last:pb-0 group">
                             <div class="absolute left-[19px] top-8 bottom-0 w-0.5 bg-slate-200 last:hidden"></div>
-                            
-                            <div class="relative shrink-0 w-10 h-10 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center text-primary shadow-sm z-10 group-hover:border-primary transition-colors">
+                            <div class="relative shrink-0 w-10 h-10 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center text-primary shadow-sm z-10">
                                 <i class="fas ${item.icon}"></i>
                             </div>
-                            
-                            <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-50 flex-1 hover:shadow-md transition-shadow">
+                            <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-50 flex-1">
                                 <div class="flex justify-between items-start mb-1">
                                     <h3 class="font-bold text-slate-800">${item.title}</h3>
                                     <span class="text-xs font-mono text-slate-400 bg-slate-50 px-2 py-1 rounded">${item.time}</span>
                                 </div>
                                 <p class="text-sm text-gray-600">${item.desc}</p>
-                                ${item.link ? `<a href="${item.link}" target="_blank" class="inline-block mt-3 text-xs text-white bg-primary px-3 py-1.5 rounded-lg hover:bg-blue-600"><i class="fas fa-location-arrow mr-1"></i> 導航</a>` : ''}
+                                ${item.link ? `<a href="${item.link}" target="_blank" class="inline-block mt-3 text-xs text-white bg-primary px-3 py-1.5 rounded-lg"><i class="fas fa-location-arrow mr-1"></i> 導航</a>` : ''}
                             </div>
                         </div>
                     `;
                 });
-
                 dayContent.innerHTML = contentHTML;
                 contentContainer.appendChild(dayContent);
             });
         }
 
-        // --- 切換分頁功能 ---
+        // --- 切換分頁 ---
         function switchTab(selectedIndex) {
-            // 1. 更新按鈕樣式
             const tabs = document.getElementById('date-tabs').children;
+            const contents = document.getElementById('itinerary-content').children;
+            
             for (let i = 0; i < tabs.length; i++) {
                 if (i === selectedIndex) {
-                    tabs[i].classList.add('tab-active', 'bg-primary', 'text-white');
+                    tabs[i].classList.add('tab-active');
                     tabs[i].classList.remove('bg-white', 'text-slate-600');
-                    // 自動捲動到按鈕位置
                     tabs[i].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                } else {
-                    tabs[i].classList.remove('tab-active', 'bg-primary', 'text-white');
-                    tabs[i].classList.add('bg-white', 'text-slate-600');
-                }
-            }
-
-            // 2. 顯示對應內容
-            const contents = document.getElementById('itinerary-content').children;
-            for (let i = 0; i < contents.length; i++) {
-                if (i === selectedIndex) {
                     contents[i].classList.remove('hidden');
                 } else {
+                    tabs[i].classList.remove('tab-active');
+                    tabs[i].classList.add('bg-white', 'text-slate-600');
                     contents[i].classList.add('hidden');
                 }
             }
@@ -349,7 +323,8 @@
 
         // 初始化
         document.addEventListener('DOMContentLoaded', () => {
-            renderApp();
+            renderApp(); // 先顯示預設畫面 (Loading)
+            fetchWeather(); // 背景偷抓天氣，抓到後會自動更新畫面
             
             // 倒數計時器
             const targetDate = new Date("December 21, 2025 16:50:00").getTime();
