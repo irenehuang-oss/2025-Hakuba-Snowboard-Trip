@@ -28,39 +28,22 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .tab-active {
-            background-color: #0ea5e9;
-            color: white;
-            box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.4);
-            transform: scale(1.05);
+            background-color: #0ea5e9; color: white;
+            box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.4); transform: scale(1.05);
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
-        
-        /* Loading Spinner */
-        .loader {
-            border: 3px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 3px solid #0ea5e9;
-            width: 20px;
-            height: 20px;
-            -webkit-animation: spin 1s linear infinite; /* Safari */
-            animation: spin 1s linear infinite;
-        }
+        .loader { border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #0ea5e9; width: 20px; height: 20px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans pb-24">
 
     <header class="relative h-[25vh] min-h-[200px] flex flex-col items-center justify-center text-white overflow-hidden bg-slate-900">
-        <img src="https://images.unsplash.com/photo-1551524559-8af4e6624178?q=80&w=2626&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-60" alt="Background">
+        <img src="https://images.unsplash.com/photo-1551524559-8af4e6624178?q=80&w=2626&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-60">
         <div class="relative z-10 text-center px-4 mt-4">
             <h1 class="text-2xl md:text-4xl font-bold drop-shadow-lg">2026 東京白馬滑雪</h1>
-            <div id="countdown" class="mt-2 text-sm md:text-base font-mono bg-black/30 px-3 py-1 rounded-full inline-block backdrop-blur-sm">
-                Loading...
-            </div>
+            <div id="countdown" class="mt-2 text-sm md:text-base font-mono bg-black/30 px-3 py-1 rounded-full inline-block backdrop-blur-sm">Loading...</div>
         </div>
     </header>
 
@@ -71,34 +54,21 @@
                 <span id="weather-status" class="text-[10px] text-blue-500 flex items-center"><div class="loader mr-1"></div> 更新資料中...</span>
             </h3>
             <div class="flex overflow-x-auto gap-3 pb-2 hide-scrollbar snap-x" id="weather-container">
-                 <div class="text-center w-full py-4 text-gray-400 text-sm">正在讀取 Google Sheet 行程...</div>
+                 <div class="text-center w-full py-4 text-gray-400 text-sm">正在讀取 Google Sheet...</div>
             </div>
         </div>
     </section>
 
     <nav class="sticky top-0 z-40 bg-slate-100/95 backdrop-blur-md border-b border-slate-200 shadow-sm py-3 transition-all">
-        <div class="px-4">
-            <div class="flex overflow-x-auto gap-3 hide-scrollbar snap-x py-1" id="date-tabs">
-                </div>
-        </div>
+        <div class="px-4"><div class="flex overflow-x-auto gap-3 hide-scrollbar snap-x py-1" id="date-tabs"></div></div>
     </nav>
 
-    <main class="container mx-auto px-4 py-6 max-w-2xl min-h-[50vh]" id="itinerary-content">
-        </main>
+    <main class="container mx-auto px-4 py-6 max-w-2xl min-h-[50vh]" id="itinerary-content"></main>
 
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around py-3 z-50 text-xs text-gray-500 safe-area-bottom shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-        <a href="#" onclick="showResortInfo(); return false;" class="flex flex-col items-center hover:text-primary transition-colors">
-            <i class="fas fa-snowflake text-lg mb-1"></i>
-            <span>雪場資訊</span>
-        </a>
-        <a href="#" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex flex-col items-center hover:text-primary text-primary transition-colors">
-            <i class="fas fa-calendar-alt text-lg mb-1"></i>
-            <span>每日行程</span>
-        </a>
-        <a href="https://www.google.com/maps" target="_blank" class="flex flex-col items-center hover:text-primary transition-colors">
-            <i class="fas fa-map-marked-alt text-lg mb-1"></i>
-            <span>導航</span>
-        </a>
+        <a href="#" onclick="showResortInfo(); return false;" class="flex flex-col items-center hover:text-primary"><i class="fas fa-snowflake text-lg mb-1"></i><span>雪場資訊</span></a>
+        <a href="#" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex flex-col items-center hover:text-primary text-primary"><i class="fas fa-calendar-alt text-lg mb-1"></i><span>每日行程</span></a>
+        <a href="https://maps.app.goo.gl/placeholder" target="_blank" class="flex flex-col items-center hover:text-primary"><i class="fas fa-map-marked-alt text-lg mb-1"></i><span>導航</span></a>
     </div>
 
     <div id="resort-modal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4 animate-fade-in">
@@ -107,54 +77,74 @@
             <h2 class="text-xl font-bold mb-6 flex items-center"><i class="fas fa-skiing mr-2 text-primary"></i> 雪場快速比較</h2>
             <div class="space-y-4">
                 <div class="bg-green-50 p-4 rounded-xl border border-green-100"><h3 class="font-bold text-green-800">Sanosaka</h3><p class="text-sm">人少、面湖景、練習首選。</p></div>
-                <div class="bg-green-50 p-4 rounded-xl border border-green-100"><h3 class="font-bold text-green-800">Tsugaike (栂池)</h3><p class="text-sm">超寬綠道、新手天堂。</p></div>
-                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100"><h3 class="font-bold text-blue-800">Goryu (五龍)</h3><p class="text-sm">有夜滑、地形豐富、基地。</p></div>
-                <div class="bg-red-50 p-4 rounded-xl border border-red-100"><h3 class="font-bold text-red-800">Happo-One (八方)</h3><p class="text-sm">奧運場地、難度高。</p></div>
+                <div class="bg-green-50 p-4 rounded-xl border border-green-100"><h3 class="font-bold text-green-800">Tsugaike</h3><p class="text-sm">超寬綠道、新手天堂。</p></div>
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100"><h3 class="font-bold text-blue-800">Goryu</h3><p class="text-sm">有夜滑、地形豐富。</p></div>
+                <div class="bg-red-50 p-4 rounded-xl border border-red-100"><h3 class="font-bold text-red-800">Happo-One</h3><p class="text-sm">奧運場地、難度高。</p></div>
             </div>
         </div>
     </div>
 
-<script>
+    <script>
         // ============================================
-        // ★★★ 請確認這裡還是您的 CSV 連結 ★★★
+        // ★★★ 請記得更換這裡的 CSV 連結 ★★★
         // ============================================
-        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQmJ01aubtIQaCnOOaW7TbqINSX0sGE8OoewKq7uREL9lEedFC1rLWc90tHCVhmOecig-wrQH-9RPml/pub?gid=811463742&single=true&output=csv"; 
+        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQmJ01aubtIQaCnOOaW7TbqINSX0sGE8OoewKq7uREL9lEedFC1rLWc90tHCVhmOecig-wrQH-9RPml/pub?gid=811463742&single=true&output=csv";
         
-        const coords = {
-            Tokyo: { lat: 35.6895, long: 139.6917 },
-            Hakuba: { lat: 36.6982, long: 137.8619 }
-        };
+        const coords = { Tokyo: { lat: 35.6895, long: 139.6917 }, Hakuba: { lat: 36.6982, long: 137.8619 } };
 
-        // 1. 讀取 Google Sheet CSV
         async function fetchSheetData() {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve) => {
                 Papa.parse(SHEET_URL, {
-                    download: true,
-                    header: true,
-                    skipEmptyLines: true, // 自動跳過空行
-                    complete: function(results) {
-                        resolve(processData(results.data));
-                    },
-                    error: function(err) {
-                        console.error("CSV error", err);
-                        alert("讀取失敗，請檢查 CSV 連結");
-                    }
+                    download: true, header: true, skipEmptyLines: true,
+                    complete: function(results) { resolve(processData(results.data)); },
+                    error: function(err) { console.error(err); alert("讀取失敗，請檢查 CSV 連結"); }
                 });
             });
         }
 
-        // 2. 資料轉換 (新增：自動修復日期與 Emoji 支援)
+        // ★ 超強日期解析器：處理 12/21, 2025/12/21, 12-21
+        function parseToISODate(inputDate) {
+            if (!inputDate) return null;
+            const str = inputDate.toString().trim();
+            const today = new Date();
+            const currentYear = today.getFullYear(); // 2025
+            
+            // 嘗試分割 (支援 / 或 -)
+            let parts = str.split(/[\/\-]/);
+            
+            if (parts.length === 3) {
+                // 格式：YYYY/MM/DD 或 MM/DD/YYYY
+                if (parts[0].length === 4) { 
+                    // YYYY/MM/DD
+                    return `${parts[0]}-${parts[1].padStart(2,'0')}-${parts[2].padStart(2,'0')}`;
+                } else {
+                    // MM/DD/YYYY (少見但預防萬一)
+                    return `${parts[2]}-${parts[0].padStart(2,'0')}-${parts[1].padStart(2,'0')}`;
+                }
+            } else if (parts.length === 2) {
+                // 格式：MM/DD
+                // 判斷跨年：如果現在是12月，行程是1月，年份+1
+                let year = currentYear;
+                if (today.getMonth() === 11 && parseInt(parts[0]) === 1) year += 1;
+                return `${year}-${parts[0].padStart(2,'0')}-${parts[1].padStart(2,'0')}`;
+            }
+            return null;
+        }
+
         function processData(rawData) {
             const groupedData = {};
             rawData.forEach(row => {
                 if (!row.Date || !row.Title) return;
-
-                // ★ 強制修剪空白，避免 Excel 多打空白鍵導致對應失敗
-                const dateKey = row.Date.trim(); 
+                const rawDate = row.Date.trim(); 
                 
-                if (!groupedData[dateKey]) {
-                    groupedData[dateKey] = {
-                        date: dateKey,
+                // ★ 這裡很重要：用原始文字當 Key，確保分頁按鈕文字正確
+                // 同時存一個 isoDate 用來查天氣
+                const isoDate = parseToISODate(rawDate);
+
+                if (!groupedData[rawDate]) {
+                    groupedData[rawDate] = {
+                        date: rawDate,
+                        isoDate: isoDate, // 存起來查天氣用
                         day: row.Day || "",
                         location: row.Location || "行程",
                         weather: { icon: "fa-spinner fa-spin", temp: "-", status: "Loading", rain: "" },
@@ -162,32 +152,21 @@
                     };
                 }
                 
-                // ★ 判斷是 FontAwesome 代碼還是 Emoji
+                // ★ 支援 Emoji 與 FontAwesome
                 let iconHtml = "";
                 const iconValue = (row.Icon || "fa-circle").trim();
-                if (iconValue.startsWith("fa-")) {
-                    // 如果是 fa- 開頭，用 FontAwesome
-                    iconHtml = `<i class="fas ${iconValue}"></i>`;
-                } else {
-                    // 否則當作 Emoji 直接顯示，並加大字體
-                    iconHtml = `<span class="text-xl">${iconValue}</span>`;
-                }
+                if (iconValue.startsWith("fa-")) iconHtml = `<i class="fas ${iconValue}"></i>`;
+                else iconHtml = `<span class="text-xl">${iconValue}</span>`;
 
-                groupedData[dateKey].details.push({
-                    time: row.Time,
-                    title: row.Title,
-                    iconHtml: iconHtml, // 改存 HTML
-                    desc: row.Desc || "",
-                    link: row.Link || ""
+                groupedData[rawDate].details.push({
+                    time: row.Time, title: row.Title, iconHtml: iconHtml,
+                    desc: row.Desc || "", link: row.Link || ""
                 });
             });
             return Object.values(groupedData);
         }
 
-        // 3. 天氣 API
         async function fetchWeather(data) {
-            const today = new Date();
-            const year = today.getFullYear();
             const urls = {
                 Tokyo: `https://api.open-meteo.com/v1/forecast?latitude=${coords.Tokyo.lat}&longitude=${coords.Tokyo.long}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FTokyo`,
                 Hakuba: `https://api.open-meteo.com/v1/forecast?latitude=${coords.Hakuba.lat}&longitude=${coords.Hakuba.long}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FTokyo`
@@ -200,24 +179,14 @@
                 document.getElementById('weather-status').innerHTML = '<i class="fas fa-check-circle"></i> 已更新';
 
                 data.forEach(day => {
-                    // 模糊比對地點
                     const locStr = day.location.toLowerCase();
-                    const locKey = (locStr.includes("白馬") || locStr.includes("hakuba") || locStr.includes("sanosaka") || locStr.includes("栂池") || locStr.includes("五龍") || locStr.includes("岩岳")) ? "Hakuba" : "Tokyo";
+                    const locKey = (locStr.includes("白馬") || locStr.includes("hakuba") || locStr.includes("sanosaka") || locStr.includes("栂池") || locStr.includes("五龍") || locStr.includes("岩岳") || locStr.includes("happo")) ? "Hakuba" : "Tokyo";
                     
                     const wData = weatherDB[locKey].daily;
-                    if (!wData) return;
+                    if (!wData || !day.isoDate) return;
 
-                    // 日期配對邏輯
-                    let currentYear = year;
-                    // 如果現在是12月但行程是1月，年份+1
-                    if (today.getMonth() === 11 && day.date.startsWith("1/")) currentYear = year + 1;
-
-                    // ★ 確保日期格式為 YYYY-MM-DD (補0)
-                    const parts = day.date.split('/');
-                    if(parts.length < 2) return; // 格式錯誤就跳過
-                    const dateStr = `${currentYear}-${parts[0].padStart(2, '0')}-${parts[1].padStart(2, '0')}`;
-                    
-                    const index = wData.time.indexOf(dateStr);
+                    // ★ 使用標準 ISO 日期比對，準確度 100%
+                    const index = wData.time.indexOf(day.isoDate);
 
                     if (index !== -1) {
                         const minT = Math.round(wData.temperature_2m_min[index]);
@@ -235,9 +204,7 @@
                         day.weather.icon = "fa-calendar-day"; 
                     }
                 });
-            } catch (error) {
-                console.error("Weather Error", error);
-            }
+            } catch (error) { console.error("Weather Error", error); }
         }
 
         function getWeatherIcon(code) {
@@ -255,29 +222,22 @@
             return "陰天";
         }
 
-        // 4. Render
         function renderApp(data) {
             const weatherContainer = document.getElementById('weather-container');
             const tabsContainer = document.getElementById('date-tabs');
             const contentContainer = document.getElementById('itinerary-content');
 
-            // 保持 Tab 狀態
             let currentActiveIndex = 0;
             const activeTab = document.querySelector('.tab-active');
-            if (activeTab) {
-                 const tabs = Array.from(document.getElementById('date-tabs').children);
-                 currentActiveIndex = tabs.indexOf(activeTab);
-            }
+            if (activeTab) currentActiveIndex = Array.from(tabsContainer.children).indexOf(activeTab);
             if (currentActiveIndex === -1 && data.length > 0) currentActiveIndex = 0;
 
-            weatherContainer.innerHTML = '';
-            tabsContainer.innerHTML = '';
-            contentContainer.innerHTML = '';
+            weatherContainer.innerHTML = ''; tabsContainer.innerHTML = ''; contentContainer.innerHTML = '';
 
             data.forEach((day, index) => {
-                // 天氣卡
                 const isSnow = day.weather.icon.includes('snowflake');
                 const cardBg = isSnow ? 'bg-blue-50 border-blue-200' : 'bg-white border-slate-100';
+                
                 weatherContainer.innerHTML += `
                     <div class="snap-start shrink-0 w-28 ${cardBg} rounded-xl p-3 flex flex-col items-center justify-center border shadow-sm">
                         <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">${day.date} ${day.location}</span>
@@ -286,7 +246,6 @@
                         <span class="text-[10px] text-gray-500">${day.weather.status} ${day.weather.rain}</span>
                     </div>`;
 
-                // Tab 按鈕
                 const isActive = index === currentActiveIndex;
                 const tabBtn = document.createElement('button');
                 tabBtn.className = `snap-start shrink-0 px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 border border-slate-200 whitespace-nowrap ${isActive ? 'tab-active' : 'bg-white text-slate-500'}`;
@@ -294,7 +253,6 @@
                 tabBtn.onclick = () => switchTab(index);
                 tabsContainer.appendChild(tabBtn);
 
-                // 行程內容
                 const dayContent = document.createElement('div');
                 dayContent.id = `day-${index}`;
                 dayContent.className = `space-y-4 ${isActive ? 'block' : 'hidden'} animate-fade-in`;
@@ -332,13 +290,11 @@
             const contents = document.getElementById('itinerary-content').children;
             for (let i = 0; i < tabs.length; i++) {
                 if (i === selectedIndex) {
-                    tabs[i].classList.add('tab-active');
-                    tabs[i].classList.remove('bg-white', 'text-slate-500');
+                    tabs[i].classList.add('tab-active'); tabs[i].classList.remove('bg-white', 'text-slate-500');
                     tabs[i].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                     contents[i].classList.remove('hidden');
                 } else {
-                    tabs[i].classList.remove('tab-active');
-                    tabs[i].classList.add('bg-white', 'text-slate-500');
+                    tabs[i].classList.remove('tab-active'); tabs[i].classList.add('bg-white', 'text-slate-500');
                     contents[i].classList.add('hidden');
                 }
             }
@@ -350,13 +306,10 @@
             renderApp(data);
             await fetchWeather(data);
             renderApp(data);
-
             const targetDate = new Date("December 21, 2025 16:50:00").getTime();
             setInterval(() => {
                 const dist = targetDate - new Date().getTime();
-                const days = Math.floor(dist / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                document.getElementById("countdown").innerText = `倒數 ${days} 天 ${hours} 時`;
+                document.getElementById("countdown").innerText = `倒數 ${Math.floor(dist / (1000*60*60*24))} 天 ${Math.floor((dist%(1000*60*60*24))/(1000*60*60))} 時`;
             }, 1000);
         });
     </script>
