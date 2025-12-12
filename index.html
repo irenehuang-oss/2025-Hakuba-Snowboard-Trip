@@ -114,80 +114,80 @@
         </div>
     </div>
 
-    <script>
+<script>
         // ============================================
-        // ★★★ 請將這裡換成您的 CSV 連結 ★★★
+        // ★★★ 請確認這裡還是您的 CSV 連結 ★★★
         // ============================================
-        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQmJ01aubtIQaCnOOaW7TbqINSX0sGE8OoewKq7uREL9lEedFC1rLWc90tHCVhmOecig-wrQH-9RPml/pub?output=csv"; 
-        // 上面這個是範例連結，請務必換成您自己的！
+        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5K_gYnQ5fW-l9q4X_Zc1Xq-R5fX-h8Xq-N6fX-p9X-k3X-o8X-q7X-r5X-s4X/pub?output=csv"; 
         
         const coords = {
             Tokyo: { lat: 35.6895, long: 139.6917 },
             Hakuba: { lat: 36.6982, long: 137.8619 }
         };
 
-        let tripData = []; // 之後會從 Google Sheet 填入
-
         // 1. 讀取 Google Sheet CSV
         async function fetchSheetData() {
             return new Promise((resolve, reject) => {
                 Papa.parse(SHEET_URL, {
                     download: true,
-                    header: true, // 使用第一列作為標題
+                    header: true,
+                    skipEmptyLines: true, // 自動跳過空行
                     complete: function(results) {
-                        const rawData = results.data;
-                        const processedData = processData(rawData);
-                        resolve(processedData);
+                        resolve(processData(results.data));
                     },
                     error: function(err) {
-                        console.error("CSV 讀取失敗", err);
-                        alert("讀取行程表失敗，請檢查 CSV 連結是否正確");
-                        reject(err);
+                        console.error("CSV error", err);
+                        alert("讀取失敗，請檢查 CSV 連結");
                     }
                 });
             });
         }
 
-        // 2. 資料轉換 (把 Excel 的平面資料轉成網頁需要的格式)
+        // 2. 資料轉換 (新增：自動修復日期與 Emoji 支援)
         function processData(rawData) {
             const groupedData = {};
-            
             rawData.forEach(row => {
-                // 過濾空行
                 if (!row.Date || !row.Title) return;
 
-                const dateKey = row.Date;
+                // ★ 強制修剪空白，避免 Excel 多打空白鍵導致對應失敗
+                const dateKey = row.Date.trim(); 
                 
-                // 如果這一天還沒建立，先建立
                 if (!groupedData[dateKey]) {
                     groupedData[dateKey] = {
-                        date: row.Date,
+                        date: dateKey,
                         day: row.Day || "",
                         location: row.Location || "行程",
                         weather: { icon: "fa-spinner fa-spin", temp: "-", status: "Loading", rain: "" },
                         details: []
                     };
                 }
+                
+                // ★ 判斷是 FontAwesome 代碼還是 Emoji
+                let iconHtml = "";
+                const iconValue = (row.Icon || "fa-circle").trim();
+                if (iconValue.startsWith("fa-")) {
+                    // 如果是 fa- 開頭，用 FontAwesome
+                    iconHtml = `<i class="fas ${iconValue}"></i>`;
+                } else {
+                    // 否則當作 Emoji 直接顯示，並加大字體
+                    iconHtml = `<span class="text-xl">${iconValue}</span>`;
+                }
 
-                // 加入詳細行程
                 groupedData[dateKey].details.push({
                     time: row.Time,
                     title: row.Title,
-                    icon: row.Icon || "fa-circle",
+                    iconHtml: iconHtml, // 改存 HTML
                     desc: row.Desc || "",
                     link: row.Link || ""
                 });
             });
-
-            // 轉回 Array 格式
             return Object.values(groupedData);
         }
 
-        // 3. 天氣 API (搭配 Sheet 資料)
+        // 3. 天氣 API
         async function fetchWeather(data) {
             const today = new Date();
             const year = today.getFullYear();
-            
             const urls = {
                 Tokyo: `https://api.open-meteo.com/v1/forecast?latitude=${coords.Tokyo.lat}&longitude=${coords.Tokyo.long}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FTokyo`,
                 Hakuba: `https://api.open-meteo.com/v1/forecast?latitude=${coords.Hakuba.lat}&longitude=${coords.Hakuba.long}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FTokyo`
@@ -195,24 +195,28 @@
 
             try {
                 const [tokyoRes, hakubaRes] = await Promise.all([fetch(urls.Tokyo), fetch(urls.Hakuba)]);
-                const weatherDB = {
-                    Tokyo: await tokyoRes.json(),
-                    Hakuba: await hakubaRes.json()
-                };
+                const weatherDB = { Tokyo: await tokyoRes.json(), Hakuba: await hakubaRes.json() };
                 
                 document.getElementById('weather-status').innerHTML = '<i class="fas fa-check-circle"></i> 已更新';
 
                 data.forEach(day => {
-                    // 簡單判斷地點 (如果 Excel 寫 "白馬" 或 "Hakuba" 就用白馬天氣，否則用東京)
-                    const locKey = (day.location.includes("白馬") || day.location.includes("Hakuba") || day.location.includes("Sanosaka") || day.location.includes("栂池") || day.location.includes("五龍") || day.location.includes("岩岳") || day.location.includes("八方")) ? "Hakuba" : "Tokyo";
+                    // 模糊比對地點
+                    const locStr = day.location.toLowerCase();
+                    const locKey = (locStr.includes("白馬") || locStr.includes("hakuba") || locStr.includes("sanosaka") || locStr.includes("栂池") || locStr.includes("五龍") || locStr.includes("岩岳")) ? "Hakuba" : "Tokyo";
+                    
                     const wData = weatherDB[locKey].daily;
-
                     if (!wData) return;
 
+                    // 日期配對邏輯
                     let currentYear = year;
+                    // 如果現在是12月但行程是1月，年份+1
                     if (today.getMonth() === 11 && day.date.startsWith("1/")) currentYear = year + 1;
 
-                    const dateStr = `${currentYear}-${day.date.split('/')[0].padStart(2, '0')}-${day.date.split('/')[1].padStart(2, '0')}`;
+                    // ★ 確保日期格式為 YYYY-MM-DD (補0)
+                    const parts = day.date.split('/');
+                    if(parts.length < 2) return; // 格式錯誤就跳過
+                    const dateStr = `${currentYear}-${parts[0].padStart(2, '0')}-${parts[1].padStart(2, '0')}`;
+                    
                     const index = wData.time.indexOf(dateStr);
 
                     if (index !== -1) {
@@ -227,13 +231,12 @@
                         day.weather.status = getWeatherDesc(code);
                     } else {
                         day.weather.temp = "N/A";
-                        day.weather.status = "尚未公布";
-                        day.weather.icon = "fa-calendar-day";
+                        day.weather.status = "預報未出";
+                        day.weather.icon = "fa-calendar-day"; 
                     }
                 });
             } catch (error) {
-                console.error("天氣失敗", error);
-                document.getElementById('weather-status').innerText = "天氣載入異常";
+                console.error("Weather Error", error);
             }
         }
 
@@ -252,7 +255,7 @@
             return "陰天";
         }
 
-        // 4. 渲染畫面 (Render)
+        // 4. Render
         function renderApp(data) {
             const weatherContainer = document.getElementById('weather-container');
             const tabsContainer = document.getElementById('date-tabs');
@@ -265,7 +268,7 @@
                  const tabs = Array.from(document.getElementById('date-tabs').children);
                  currentActiveIndex = tabs.indexOf(activeTab);
             }
-            if (currentActiveIndex === -1) currentActiveIndex = 0;
+            if (currentActiveIndex === -1 && data.length > 0) currentActiveIndex = 0;
 
             weatherContainer.innerHTML = '';
             tabsContainer.innerHTML = '';
@@ -306,8 +309,8 @@
                     contentHTML += `
                         <div class="flex gap-4 relative pb-8 last:pb-2 group">
                             <div class="absolute left-[19px] top-8 bottom-0 w-0.5 bg-slate-200 last:hidden"></div>
-                            <div class="relative shrink-0 w-10 h-10 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center text-primary shadow-sm z-10">
-                                <i class="fas ${item.icon}"></i>
+                            <div class="relative shrink-0 w-10 h-10 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center text-primary shadow-sm z-10 overflow-hidden">
+                                ${item.iconHtml}
                             </div>
                             <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-50 flex-1">
                                 <div class="flex justify-between items-start mb-1">
@@ -324,7 +327,6 @@
             });
         }
 
-        // 切換 Tab
         function switchTab(selectedIndex) {
             const tabs = document.getElementById('date-tabs').children;
             const contents = document.getElementById('itinerary-content').children;
@@ -341,20 +343,14 @@
                 }
             }
         }
-
         function showResortInfo() { document.getElementById('resort-modal').classList.remove('hidden'); }
 
-        // 初始化
         document.addEventListener('DOMContentLoaded', async () => {
-            // 1. 先抓 Sheet 資料
-            tripData = await fetchSheetData();
-            // 2. 初始渲染 (無天氣)
-            renderApp(tripData);
-            // 3. 補抓天氣並更新
-            await fetchWeather(tripData);
-            renderApp(tripData); // 更新天氣後的畫面
+            const data = await fetchSheetData();
+            renderApp(data);
+            await fetchWeather(data);
+            renderApp(data);
 
-            // 倒數計時
             const targetDate = new Date("December 21, 2025 16:50:00").getTime();
             setInterval(() => {
                 const dist = targetDate - new Date().getTime();
