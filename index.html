@@ -30,9 +30,9 @@
 <body class="bg-slate-100 text-slate-800 font-sans pb-24">
 
     <header class="relative h-[200px] flex flex-col items-center justify-center text-white bg-slate-900 overflow-hidden">
-        <img src="https://images.pexels.com/photos/848618/pexels-photo-848618.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" class="absolute inset-0 w-full h-full object-cover opacity-60">
+        <img src="https://images.pexels.com/photos/1769490/pexels-photo-1769490.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" class="absolute inset-0 w-full h-full object-cover opacity-60">
         <div class="relative z-10 text-center px-4">
-            <h1 class="text-3xl font-bold drop-shadow-md">2026 東京白馬滑雪</h1>
+            <h1 id="main-title" class="text-3xl font-bold drop-shadow-md">Loading...</h1>
             <div id="countdown" class="mt-2 text-sm font-mono bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm">Loading...</div>
         </div>
     </header>
@@ -56,9 +56,8 @@
     <main class="container mx-auto px-4 py-6 max-w-2xl min-h-[50vh]" id="itinerary-content"></main>
 
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around py-3 z-50 text-xs text-gray-500">
-        <a href="#" onclick="showModal(); return false;" class="flex flex-col items-center text-primary font-bold"><i class="fas fa-snowflake text-lg mb-1"></i>雪場</a>
-        <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); closeResortModal();" class="flex flex-col items-center"><i class="fas fa-calendar-alt text-lg mb-1"></i>行程</a>
-        <a href="https://maps.app.goo.gl/placeholder" target="_blank" class="flex flex-col items-center"><i class="fas fa-location-arrow text-lg mb-1"></i>導航</a>
+        <a href="#" onclick="showModal(); return false;" class="flex flex-col items-center text-primary font-bold w-1/2 border-r border-slate-100"><i class="fas fa-snowflake text-lg mb-1"></i>雪場</a>
+        <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); closeResortModal();" class="flex flex-col items-center w-1/2 hover:text-primary transition-colors"><i class="fas fa-calendar-alt text-lg mb-1"></i>行程</a>
     </div>
 
     <div id="resort-modal" class="fixed inset-0 bg-slate-100 z-[60] hidden flex flex-col overflow-hidden animate-fade-in">
@@ -66,27 +65,23 @@
             <h2 class="text-lg font-bold text-slate-800"><i class="fas fa-mountain text-primary mr-2"></i>白馬雪場攻略</h2>
             <button onclick="closeResortModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition"><i class="fas fa-times"></i></button>
         </div>
-        
         <div class="flex-1 overflow-y-auto pb-24 bg-slate-100">
             <div class="relative h-48 w-full">
-                <img src="https://images.pexels.com/photos/352096/pexels-photo-352096.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" class="w-full h-full object-cover">
+                <img src="https://images.pexels.com/photos/848599/pexels-photo-848599.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent flex items-end p-4">
-                    <h1 class="text-white text-2xl font-bold drop-shadow-md">Explore Hakuba Valley</h1>
+                    <h1 class="text-white text-2xl font-bold drop-shadow-md">Snowboarding in Hakuba</h1>
                 </div>
             </div>
-            
-            <div class="p-4 space-y-4" id="resort-list">
-                </div>
+            <div class="p-4 space-y-4" id="resort-list"></div>
         </div>
     </div>
 
     <script>
         // ============================================
-        // ★★★ 請更換為您的 Google Sheet CSV 連結 ★★★
+        // ★★★ 請確認您的 CSV 連結 ★★★
         // ============================================
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQmJ01aubtIQaCnOOaW7TbqINSX0sGE8OoewKq7uREL9lEedFC1rLWc90tHCVhmOecig-wrQH-9RPml/pub?gid=811463742&single=true&output=csv";
         
-        // ★ 雪場資料庫 (已更新：移除圖片，新增官網，更新連結)
         const RESORTS = [
             {
                 name: "白馬五龍 (Goryu)",
@@ -95,8 +90,8 @@
                 price: "¥8,000 (含47)",
                 time: "約 3-5 分",
                 level: "全程度",
-                hours: "08:00 - 16:50 (夜滑至 21:30)",
-                desc: "您住的地方去這裡最方便！山腳 Toomi 雪道寬敞適合新手，擁有白馬最棒的夜滑場地。Base Center 設施完善 (有 Subway、溫泉)。",
+                hours: "08:00 - 16:50 (夜滑 18:30 - 21:30)", 
+                desc: "距離住宿地點最近，山腳 Toomi 雪道寬敞適合新手，擁有白馬最棒的夜滑場地。Base Center 設施完善 (有 Subway、溫泉)。",
                 map: "https://maps.app.goo.gl/JqLbBjLt4aBBZKCQ6",
                 web: "https://goryu47.com/en/"
             },
@@ -131,7 +126,7 @@
                 price: "¥7,000 - 7,500",
                 time: "約 20-25 分",
                 level: "初中級",
-                hours: "08:00 - 16:00 (3月後無夜滑)",
+                hours: "08:00 - 16:00 (無夜滑)",
                 desc: "鐘鳴之丘擁有日本最寬闊的初級滑道 (1.2km寬)，新手練習轉彎完全不怕撞。另有需上課才能進入的 DBD 粉雪樹林區。",
                 map: "https://maps.app.goo.gl/WbFqqEgSiqN9qdPK7",
                 web: "https://tsugaike.nippon-ski.com/en/"
@@ -156,7 +151,7 @@
                 time: "約 5-8 分",
                 level: "初中級",
                 hours: "08:00 - 16:00 (無夜滑)",
-                desc: "唯一可眺望「青木湖」的雪場，景色優美。團客少，適合想要安靜練習的人。離您住的地方往南開很近。",
+                desc: "唯一可眺望「青木湖」的雪場，景色優美。團客少，適合想要安靜練習的人。",
                 map: "https://maps.app.goo.gl/Q1s8rVESDZ9VVCbA8",
                 web: "https://sanosaka.jp/"
             }
@@ -177,6 +172,7 @@
             });
         }
 
+        // ★ 核心邏輯修正：Tag 直接抓取 C 欄空格後的文字
         function processSheet(data) {
             const grouped = {};
             data.forEach(row => {
@@ -184,19 +180,24 @@
                 const dKey = row.Date.trim(); 
                 
                 if (!grouped[dKey]) {
-                    const loc = row.Location || "";
-                    const isHakuba = loc.includes("白馬") || loc.toLowerCase().includes("hakuba");
+                    const locationText = row.Location || "";
+                    const isHakuba = locationText.includes("白馬") || locationText.toLowerCase().includes("hakuba");
                     let dayChar = (row.Day || "").replace("週", "").trim(); 
+                    
+                    // ★ 新邏輯：以「空格」切割字串
+                    // 例如 "Tokyo 飛行日" -> 拆成 ["Tokyo", "飛行日"] -> 取 "飛行日"
+                    // 如果沒有空格 (例如 "Tokyo")，則 tag 為空
+                    const parts = locationText.split(' ');
                     let tag = "";
-                    if (loc.includes("移動")) tag = "移動日";
-                    else if (loc.includes("會合")) tag = "會合日";
-                    else if (loc.includes("新年") || loc.includes("跨年")) tag = "新年";
-                    else if (loc.includes("飛行")) tag = "飛行日";
+                    if (parts.length > 1) {
+                        // 取出第二個部分之後的所有文字 (避免中間還有空格被切掉)
+                        tag = parts.slice(1).join(' ');
+                    }
                     
                     grouped[dKey] = {
                         date: dKey, dayChar: dayChar, tag: tag,
                         cityKey: isHakuba ? "Hakuba" : "Tokyo",
-                        location: isHakuba ? "白馬 Hakuba" : "東京 Tokyo",
+                        location: locationText, // 標題仍顯示完整文字
                         weather: { temp: "N/A", icon: "fa-calendar", status: "預報未出" },
                         details: []
                     };
@@ -272,7 +273,9 @@
                 const btn = document.createElement('button');
                 btn.className = `snap-start shrink-0 px-4 py-1.5 h-auto rounded-xl text-sm border border-slate-200 bg-white text-slate-500 transition-all flex flex-col items-center justify-center min-w-[80px]`;
                 let btnHtml = `<span class="font-bold leading-none mb-1">${day.date} <span class="text-xs font-normal">(${day.dayChar})</span></span>`;
-                if (day.tag) btnHtml += `<span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 rounded-full leading-tight">${day.tag}</span>`;
+                if (day.tag) {
+                    btnHtml += `<span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 rounded-full leading-tight">${day.tag}</span>`;
+                }
                 btn.innerHTML = btnHtml;
                 btn.onclick = () => switchTab(idx);
                 tContainer.appendChild(btn);
@@ -281,7 +284,7 @@
                 const content = document.createElement('div');
                 content.id = `day-${idx}`;
                 content.className = `hidden animate-fade-in`;
-                let html = `<h2 class="text-2xl font-bold mb-4">${day.location}</h2><div class="space-y-0">`;
+                let html = `<h2 class="text-2xl font-bold mb-4">${day.location} <span class="text-sm font-normal text-gray-500 ml-2">${day.date} (${day.dayChar})</span></h2><div class="space-y-0">`;
                 day.details.forEach((item, i) => {
                     const isLast = i === day.details.length - 1;
                     if (item.type === 'transit') {
@@ -342,15 +345,14 @@
             }
         }
 
-        // --- 雪場 Modal 邏輯 (更新版) ---
+        // --- 雪場 Modal 邏輯 ---
         function showModal() { 
             const list = document.getElementById('resort-list');
-            list.innerHTML = ""; // 清空舊的
+            list.innerHTML = ""; 
             
             RESORTS.forEach(r => {
                 const tagsHtml = r.tags.map(t => `<span class="text-[10px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full mr-1">${t}</span>`).join('');
                 
-                // 改為無圖片，純資訊卡片，新增「官網」按鈕
                 const card = `
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 resort-card">
                         <div class="flex justify-between items-start mb-3">
@@ -390,9 +392,24 @@
             document.getElementById('resort-modal').classList.add('hidden');
         }
 
+        // ★ 更新首頁標題
+        function updateMainTitle() {
+            Papa.parse(SHEET_URL, {
+                download: true, header: true,
+                complete: (res) => {
+                    if(res.data.length > 0 && res.data[0].Location) {
+                        document.getElementById('main-title').innerText = res.data[0].Location; 
+                    } else {
+                        document.getElementById('main-title').innerText = "2026 東京白馬滑雪";
+                    }
+                }
+            });
+        }
+
         (async () => {
             const data = await fetchSheetData();
             if(data.length > 0) { render(data); await fetchWeather(data); render(data); }
+            updateMainTitle(); 
             const target = new Date("2026-01-04T12:00:00").getTime();
             setInterval(() => {
                 const diff = target - new Date().getTime();
