@@ -25,6 +25,9 @@
         .tab-active { background-color: #0ea5e9; color: white; transform: scale(1.05); border-color: #0ea5e9; }
         .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* 雪場卡片樣式 */
+        .resort-card { scroll-snap-align: start; }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans pb-24">
@@ -56,22 +59,19 @@
     <main class="container mx-auto px-4 py-6 max-w-2xl min-h-[50vh]" id="itinerary-content"></main>
 
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around py-3 z-50 text-xs text-gray-500">
-        <a href="#" onclick="showModal(); return false;" class="flex flex-col items-center"><i class="fas fa-snowflake text-lg mb-1"></i>雪場</a>
-        <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'})" class="flex flex-col items-center text-primary"><i class="fas fa-calendar-alt text-lg mb-1"></i>行程</a>
+        <a href="#" onclick="showModal(); return false;" class="flex flex-col items-center text-primary font-bold"><i class="fas fa-snowflake text-lg mb-1"></i>雪場</a>
+        <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); closeResortModal();" class="flex flex-col items-center"><i class="fas fa-calendar-alt text-lg mb-1"></i>行程</a>
         <a href="https://maps.app.goo.gl/placeholder" target="_blank" class="flex flex-col items-center"><i class="fas fa-location-arrow text-lg mb-1"></i>導航</a>
     </div>
 
-    <div id="resort-modal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl w-full max-w-sm p-6 relative">
-            <button onclick="document.getElementById('resort-modal').classList.add('hidden')" class="absolute top-3 right-3 text-gray-400"><i class="fas fa-times"></i></button>
-            <h3 class="font-bold text-lg mb-4">雪場比較</h3>
-            <div class="space-y-3 text-sm">
-                <div class="p-3 bg-green-50 rounded"><b>Sanosaka</b>: 人少、面湖、練習首選</div>
-                <div class="p-3 bg-green-50 rounded"><b>栂池 (Tsugaike)</b>: 超寬綠道、新手天堂</div>
-                <div class="p-3 bg-blue-50 rounded"><b>五龍 (Goryu)</b>: 基地、有夜滑、連通47</div>
-                <div class="p-3 bg-red-50 rounded"><b>八方 (Happo)</b>: 奧運場地、難度高</div>
-            </div>
+    <div id="resort-modal" class="fixed inset-0 bg-slate-100 z-[60] hidden flex flex-col overflow-hidden animate-fade-in">
+        <div class="bg-white px-4 py-3 flex justify-between items-center border-b border-slate-200 shadow-sm shrink-0">
+            <h2 class="text-lg font-bold text-slate-800"><i class="fas fa-mountain text-primary mr-2"></i>白馬雪場攻略</h2>
+            <button onclick="closeResortModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500"><i class="fas fa-times"></i></button>
         </div>
+        
+        <div class="flex-1 overflow-y-auto p-4 space-y-6 pb-24" id="resort-list">
+            </div>
     </div>
 
     <script>
@@ -80,6 +80,82 @@
         // ============================================
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQmJ01aubtIQaCnOOaW7TbqINSX0sGE8OoewKq7uREL9lEedFC1rLWc90tHCVhmOecig-wrQH-9RPml/pub?gid=811463742&single=true&output=csv";
         
+        // ★ 雪場資料庫 (已根據您的提供整理)
+        const RESORTS = [
+            {
+                name: "白馬五龍 (Goryu)",
+                en: "Hakuba Goryu / エイブル白馬五竜",
+                tags: ["新手友善", "夜滑之王", "交通最便"],
+                price: "¥8,000 (含47)",
+                time: "約 3-5 分",
+                level: "全程度",
+                hours: "08:00 - 16:50 (夜滑至 21:30)",
+                desc: "您住的地方去這裡最方便！山腳 Toomi 雪道寬敞適合新手，擁有白馬最棒的夜滑場地。Base Center 設施完善 (有 Subway、溫泉)。",
+                map: "https://goo.gl/maps/k1J1Kj2J2J2J2J2J2", // 建議換成真實連結
+                img: "https://images.unsplash.com/photo-1565551695287-c5332c967676?q=80&w=1000&auto=format&fit=crop"
+            },
+            {
+                name: "Hakuba 47",
+                en: "Hakuba 47 Winter Sports Park",
+                tags: ["地形公園", "雪質保證", "朝北坡向"],
+                price: "¥8,000 (含五龍)",
+                time: "約 10-12 分",
+                level: "中高級 (Park)",
+                hours: "08:00 - 16:00 (無夜滑)",
+                desc: "白馬最強 Park (半管、跳台)！因為坡向朝北，春季雪質通常比其他雪場好。可從五龍山頂滑過去。",
+                map: "https://goo.gl/maps/placeholder",
+                img: "https://images.unsplash.com/photo-1520524456573-04022a36b52c?q=80&w=1000&auto=format&fit=crop"
+            },
+            {
+                name: "八方尾根 (Happo-One)",
+                en: "Happo-One / 白馬八方尾根",
+                tags: ["奧運場地", "高手向", "景色壯觀"],
+                price: "¥7,200 - 8,500",
+                time: "約 15 分",
+                level: "中高級 (新手不推)",
+                hours: "08:00 - 16:00 (無夜滑)",
+                desc: "白馬最具代表性的雪場，規模最大。充滿挑戰性的紅黑線與饅頭 (Mogul)。聯絡道較窄且平，對單板新手較吃力。",
+                map: "https://goo.gl/maps/placeholder",
+                img: "https://images.unsplash.com/photo-1486008630986-7729226f9e6b?q=80&w=1000&auto=format&fit=crop"
+            },
+            {
+                name: "栂池高原 (Tsugaike)",
+                en: "Tsugaike Kogen / 栂池高原",
+                tags: ["超寬綠道", "新手天堂", "DBD粉雪"],
+                price: "¥7,000 - 7,500",
+                time: "約 20-25 分",
+                level: "初中級",
+                hours: "08:00 - 16:00 (3月後無夜滑)",
+                desc: "鐘鳴之丘擁有日本最寬闊的初級滑道 (1.2km寬)，新手練習轉彎完全不怕撞。另有需上課才能進入的 DBD 粉雪樹林區。",
+                map: "https://goo.gl/maps/placeholder",
+                img: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?q=80&w=1000&auto=format&fit=crop"
+            },
+            {
+                name: "白馬岩岳 (Iwatake)",
+                en: "Hakuba Iwatake / 白馬岩岳",
+                tags: ["網美鞦韆", "Carving聖地", "避風"],
+                price: "¥6,500 - 7,000",
+                time: "約 15-18 分",
+                level: "初中級",
+                hours: "08:00 - 16:00 (無夜滑)",
+                desc: "地形流暢，雪道寬且順，適合練 Carving。山頂有著名的 Mountain Harbor 和網美鞦韆，必去拍照！",
+                map: "https://goo.gl/maps/placeholder",
+                img: "https://images.unsplash.com/photo-1612967926105-01eb2554766b?q=80&w=1000&auto=format&fit=crop"
+            },
+            {
+                name: "白馬 Sanosaka",
+                en: "White Resort Hakuba Sanosaka",
+                tags: ["湖景滑雪", "人少清幽", "高CP值"],
+                price: "¥4,800 - 5,500",
+                time: "約 5-8 分",
+                level: "初中級",
+                hours: "08:00 - 16:00 (無夜滑)",
+                desc: "唯一可眺望「青木湖」的雪場，景色優美。團客少，適合想要安靜練習的人。離您住的地方往南開很近。",
+                map: "https://goo.gl/maps/placeholder",
+                img: "https://images.unsplash.com/photo-1548270502-39f860477176?q=80&w=1000&auto=format&fit=crop"
+            }
+        ];
+
         const coords = { 
             Tokyo: { lat: 35.6895, long: 139.6917 }, 
             Hakuba: { lat: 36.6982, long: 137.8619 } 
@@ -95,49 +171,34 @@
             });
         }
 
-        // ★ 核心升級：讀取 Type 欄位
         function processSheet(data) {
             const grouped = {};
             data.forEach(row => {
-                if (!row.Date || (!row.Title && !row.Type)) return; // 容錯
+                if (!row.Date || (!row.Title && !row.Type)) return;
                 const dKey = row.Date.trim(); 
                 
                 if (!grouped[dKey]) {
                     const loc = row.Location || "";
                     const isHakuba = loc.includes("白馬") || loc.toLowerCase().includes("hakuba");
                     let dayChar = (row.Day || "").replace("週", "").trim(); 
-                    
                     let tag = "";
                     if (loc.includes("移動")) tag = "移動日";
                     else if (loc.includes("會合")) tag = "會合日";
                     else if (loc.includes("新年") || loc.includes("跨年")) tag = "新年";
                     
                     grouped[dKey] = {
-                        date: dKey,
-                        dayChar: dayChar,
-                        tag: tag,
+                        date: dKey, dayChar: dayChar, tag: tag,
                         cityKey: isHakuba ? "Hakuba" : "Tokyo",
                         location: isHakuba ? "白馬 Hakuba" : "東京 Tokyo",
                         weather: { temp: "N/A", icon: "fa-calendar", status: "預報未出" },
                         details: []
                     };
                 }
-
-                // 處理 Icon
                 const iconRaw = (row.Icon || "fa-circle").trim();
                 const iconHtml = iconRaw.startsWith("fa-") ? `<i class="fas ${iconRaw}"></i>` : `<span class="text-xl">${iconRaw}</span>`;
-
-                // ★ 新增：讀取 Type
-                // 如果 Excel 沒有 Type 欄位，預設為 'event'
                 const type = row.Type ? row.Type.trim().toLowerCase() : 'event';
-
                 grouped[dKey].details.push({
-                    time: row.Time || "", 
-                    title: row.Title || "", 
-                    desc: row.Desc, 
-                    link: row.Link, 
-                    iconHtml: iconHtml,
-                    type: type // 存起來，渲染時判斷
+                    time: row.Time || "", title: row.Title || "", desc: row.Desc, link: row.Link, iconHtml: iconHtml, type: type
                 });
             });
             return Object.values(grouped);
@@ -153,23 +214,19 @@
             try {
                 const [resTok, resHak] = await Promise.all([fetch(urls.Tokyo), fetch(urls.Hakuba)]);
                 const db = { Tokyo: await resTok.json(), Hakuba: await resHak.json() };
-                
                 document.getElementById('weather-status').innerText = "已更新";
 
                 daysData.forEach(day => {
                     const cityData = db[day.cityKey];
                     if (!cityData || !cityData.daily) return;
-
                     const targetMMDD = day.date.replace('/', '-'); 
                     const timeList = cityData.daily.time; 
                     const matchIndex = timeList.findIndex(t => t.endsWith(targetMMDD));
-
                     if (matchIndex !== -1) {
                         const min = Math.round(cityData.daily.temperature_2m_min[matchIndex]);
                         const max = Math.round(cityData.daily.temperature_2m_max[matchIndex]);
                         const rain = cityData.daily.precipitation_probability_max[matchIndex];
                         const code = cityData.daily.weathercode[matchIndex];
-
                         day.weather.temp = `${min}°~${max}°`;
                         day.weather.status = rain > 0 ? `${rain}% 降水` : "好天氣";
                         day.weather.icon = getWeatherIcon(code);
@@ -190,7 +247,6 @@
             const wContainer = document.getElementById('weather-container');
             const tContainer = document.getElementById('date-tabs');
             const cContainer = document.getElementById('itinerary-content');
-            
             wContainer.innerHTML = ""; tContainer.innerHTML = ""; cContainer.innerHTML = "";
 
             data.forEach((day, idx) => {
@@ -218,17 +274,13 @@
                 const content = document.createElement('div');
                 content.id = `day-${idx}`;
                 content.className = `hidden animate-fade-in`;
-                
-                let html = `<h2 class="text-2xl font-bold mb-4">${day.location}</h2><div class="space-y-0">`; // space-y-0 為了讓交通線連起來
-                
+                let html = `<h2 class="text-2xl font-bold mb-4">${day.location}</h2><div class="space-y-0">`;
                 day.details.forEach((item, i) => {
                     const isLast = i === day.details.length - 1;
-                    
                     if (item.type === 'transit') {
-                        // ★★★ 交通樣式渲染 (Commute Widget) ★★★
                         html += `
-                        <div class="flex relative pl-[19px]"> <div class="absolute left-[19px] top-0 bottom-0 w-0.5 border-l-2 border-dotted border-slate-300"></div>
-                            
+                        <div class="flex relative pl-[19px]">
+                            <div class="absolute left-[19px] top-0 bottom-0 w-0.5 border-l-2 border-dotted border-slate-300"></div>
                             <div class="relative z-10 my-2 ml-6">
                                 <div class="inline-flex items-center bg-slate-100 border border-slate-200 rounded-full px-3 py-1 text-xs text-slate-600 shadow-sm">
                                     <span class="mr-2 text-primary">${item.iconHtml}</span>
@@ -238,15 +290,12 @@
                             </div>
                         </div>`;
                     } else {
-                        // ★★★ 一般行程樣式 (Card) ★★★
                         html += `
                         <div class="flex gap-4 relative pb-6 group">
                             <div class="absolute left-[19px] top-8 bottom-0 w-0.5 bg-slate-200 ${isLast ? 'hidden' : ''}"></div>
-                            
                             <div class="relative shrink-0 w-10 h-10 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center text-primary z-10 overflow-hidden shadow-sm group-hover:border-primary transition-colors">
                                 ${item.iconHtml}
                             </div>
-                            
                             <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-50 flex-1 hover:shadow-md transition-shadow">
                                 <div class="flex justify-between items-start">
                                     <h3 class="font-bold text-slate-800">${item.title}</h3>
@@ -262,7 +311,6 @@
                 content.innerHTML = html;
                 cContainer.appendChild(content);
             });
-
             switchTab(0);
         }
 
@@ -287,16 +335,55 @@
             }
         }
 
-        function showModal() { document.getElementById('resort-modal').classList.remove('hidden'); }
+        // --- 雪場 Modal 邏輯 ---
+        function showModal() { 
+            const list = document.getElementById('resort-list');
+            list.innerHTML = ""; // 清空舊的
+            
+            RESORTS.forEach(r => {
+                const tagsHtml = r.tags.map(t => `<span class="text-[10px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full mr-1">${t}</span>`).join('');
+                
+                const card = `
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden resort-card">
+                        <div class="h-32 bg-gray-200 relative">
+                            <img src="${r.img}" class="w-full h-full object-cover">
+                            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3 pt-8">
+                                <h3 class="text-white font-bold text-lg leading-none">${r.name}</h3>
+                                <p class="text-white/80 text-xs">${r.en}</p>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <div class="flex flex-wrap gap-y-2 mb-3">${tagsHtml}</div>
+                            
+                            <div class="grid grid-cols-2 gap-3 text-sm mb-4">
+                                <div><span class="text-gray-400 text-xs block">車程</span><i class="fas fa-car mr-1"></i>${r.time}</div>
+                                <div><span class="text-gray-400 text-xs block">票價</span><i class="fas fa-tag mr-1"></i>${r.price}</div>
+                                <div><span class="text-gray-400 text-xs block">難度</span><i class="fas fa-layer-group mr-1"></i>${r.level}</div>
+                                <div><span class="text-gray-400 text-xs block">營業</span><i class="fas fa-clock mr-1"></i>${r.hours}</div>
+                            </div>
+                            
+                            <p class="text-sm text-gray-600 leading-relaxed mb-4 bg-slate-50 p-3 rounded-lg border border-slate-100">${r.desc}</p>
+                            
+                            <a href="${r.map}" target="_blank" class="block w-full text-center bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 rounded-lg transition-colors">
+                                <i class="fas fa-location-arrow mr-2"></i>Google 導航
+                            </a>
+                        </div>
+                    </div>
+                `;
+                list.innerHTML += card;
+            });
+            
+            document.getElementById('resort-modal').classList.remove('hidden'); 
+        }
+
+        function closeResortModal() {
+            document.getElementById('resort-modal').classList.add('hidden');
+        }
 
         (async () => {
             const data = await fetchSheetData();
-            if(data.length > 0) {
-                render(data); 
-                await fetchWeather(data); 
-                render(data); 
-            }
-            const target = new Date("January 4, 2026 12:00:00").getTime();  
+            if(data.length > 0) { render(data); await fetchWeather(data); render(data); }
+            const target = new Date("2026-01-04T12:00:00").getTime();
             setInterval(() => {
                 const diff = target - new Date().getTime();
                 const d = Math.floor(diff / (1000*60*60*24));
