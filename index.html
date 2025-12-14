@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>2026 東京白馬滑雪行</title>
+    <title>2025-2026 東京白馬滑雪Trip</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -30,9 +30,9 @@
 <body class="bg-slate-100 text-slate-800 font-sans pb-24">
 
     <header class="relative h-[200px] flex flex-col items-center justify-center text-white bg-slate-900 overflow-hidden">
-        <img src="https://images.pexels.com/photos/1769490/pexels-photo-1769490.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" class="absolute inset-0 w-full h-full object-cover opacity-60">
+        <img src="https://images.pexels.com/photos/1933339/pexels-photo-1933339.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" class="absolute inset-0 w-full h-full object-cover opacity-60">
         <div class="relative z-10 text-center px-4">
-            <h1 id="main-title" class="text-3xl font-bold drop-shadow-md">Loading...</h1>
+            <h1 id="main-title" class="text-3xl font-bold drop-shadow-md">2025-2026 東京白馬滑雪Trip</h1>
             <div id="countdown" class="mt-2 text-sm font-mono bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm">Loading...</div>
         </div>
     </header>
@@ -65,6 +65,7 @@
             <h2 class="text-lg font-bold text-slate-800"><i class="fas fa-mountain text-primary mr-2"></i>白馬雪場攻略</h2>
             <button onclick="closeResortModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition"><i class="fas fa-times"></i></button>
         </div>
+        
         <div class="flex-1 overflow-y-auto pb-24 bg-slate-100">
             <div class="relative h-48 w-full">
                 <img src="https://images.pexels.com/photos/848599/pexels-photo-848599.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" class="w-full h-full object-cover">
@@ -72,6 +73,7 @@
                     <h1 class="text-white text-2xl font-bold drop-shadow-md">Snowboarding in Hakuba</h1>
                 </div>
             </div>
+            
             <div class="p-4 space-y-4" id="resort-list"></div>
         </div>
     </div>
@@ -172,7 +174,6 @@
             });
         }
 
-        // ★ 核心邏輯修正：Tag 直接抓取 C 欄空格後的文字
         function processSheet(data) {
             const grouped = {};
             data.forEach(row => {
@@ -180,24 +181,22 @@
                 const dKey = row.Date.trim(); 
                 
                 if (!grouped[dKey]) {
+                    // 這裡直接使用 C 欄文字，不加任何額外文字
                     const locationText = row.Location || "";
                     const isHakuba = locationText.includes("白馬") || locationText.toLowerCase().includes("hakuba");
                     let dayChar = (row.Day || "").replace("週", "").trim(); 
                     
-                    // ★ 新邏輯：以「空格」切割字串
-                    // 例如 "Tokyo 飛行日" -> 拆成 ["Tokyo", "飛行日"] -> 取 "飛行日"
-                    // 如果沒有空格 (例如 "Tokyo")，則 tag 為空
+                    // 自動抓取空白後的文字作為 Tag
                     const parts = locationText.split(' ');
                     let tag = "";
                     if (parts.length > 1) {
-                        // 取出第二個部分之後的所有文字 (避免中間還有空格被切掉)
                         tag = parts.slice(1).join(' ');
                     }
                     
                     grouped[dKey] = {
                         date: dKey, dayChar: dayChar, tag: tag,
                         cityKey: isHakuba ? "Hakuba" : "Tokyo",
-                        location: locationText, // 標題仍顯示完整文字
+                        location: locationText, 
                         weather: { temp: "N/A", icon: "fa-calendar", status: "預報未出" },
                         details: []
                     };
@@ -392,24 +391,9 @@
             document.getElementById('resort-modal').classList.add('hidden');
         }
 
-        // ★ 更新首頁標題
-        function updateMainTitle() {
-            Papa.parse(SHEET_URL, {
-                download: true, header: true,
-                complete: (res) => {
-                    if(res.data.length > 0 && res.data[0].Location) {
-                        document.getElementById('main-title').innerText = res.data[0].Location; 
-                    } else {
-                        document.getElementById('main-title').innerText = "2026 東京白馬滑雪";
-                    }
-                }
-            });
-        }
-
         (async () => {
             const data = await fetchSheetData();
             if(data.length > 0) { render(data); await fetchWeather(data); render(data); }
-            updateMainTitle(); 
             const target = new Date("2026-01-04T12:00:00").getTime();
             setInterval(() => {
                 const diff = target - new Date().getTime();
