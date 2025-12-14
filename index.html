@@ -25,15 +25,12 @@
         .tab-active { background-color: #0ea5e9; color: white; transform: scale(1.05); border-color: #0ea5e9; }
         .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* 雪場卡片樣式 */
-        .resort-card { scroll-snap-align: start; }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans pb-24">
 
     <header class="relative h-[200px] flex flex-col items-center justify-center text-white bg-slate-900 overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1551524559-8af4e6624178?q=80&w=2626&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-60">
+        <img src="https://images.pexels.com/photos/848618/pexels-photo-848618.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" class="absolute inset-0 w-full h-full object-cover opacity-60">
         <div class="relative z-10 text-center px-4">
             <h1 class="text-3xl font-bold drop-shadow-md">2026 東京白馬滑雪</h1>
             <div id="countdown" class="mt-2 text-sm font-mono bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm">Loading...</div>
@@ -65,13 +62,22 @@
     </div>
 
     <div id="resort-modal" class="fixed inset-0 bg-slate-100 z-[60] hidden flex flex-col overflow-hidden animate-fade-in">
-        <div class="bg-white px-4 py-3 flex justify-between items-center border-b border-slate-200 shadow-sm shrink-0">
+        <div class="bg-white px-4 py-3 flex justify-between items-center border-b border-slate-200 shadow-sm shrink-0 z-10">
             <h2 class="text-lg font-bold text-slate-800"><i class="fas fa-mountain text-primary mr-2"></i>白馬雪場攻略</h2>
-            <button onclick="closeResortModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500"><i class="fas fa-times"></i></button>
+            <button onclick="closeResortModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition"><i class="fas fa-times"></i></button>
         </div>
         
-        <div class="flex-1 overflow-y-auto p-4 space-y-6 pb-24" id="resort-list">
+        <div class="flex-1 overflow-y-auto pb-24 bg-slate-100">
+            <div class="relative h-48 w-full">
+                <img src="https://images.pexels.com/photos/352096/pexels-photo-352096.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent flex items-end p-4">
+                    <h1 class="text-white text-2xl font-bold drop-shadow-md">Explore Hakuba Valley</h1>
+                </div>
             </div>
+            
+            <div class="p-4 space-y-4" id="resort-list">
+                </div>
+        </div>
     </div>
 
     <script>
@@ -80,7 +86,7 @@
         // ============================================
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQmJ01aubtIQaCnOOaW7TbqINSX0sGE8OoewKq7uREL9lEedFC1rLWc90tHCVhmOecig-wrQH-9RPml/pub?gid=811463742&single=true&output=csv";
         
-        // ★ 雪場資料庫 (已根據您的提供整理)
+        // ★ 雪場資料庫 (已更新：移除圖片，新增官網，更新連結)
         const RESORTS = [
             {
                 name: "白馬五龍 (Goryu)",
@@ -91,8 +97,8 @@
                 level: "全程度",
                 hours: "08:00 - 16:50 (夜滑至 21:30)",
                 desc: "您住的地方去這裡最方便！山腳 Toomi 雪道寬敞適合新手，擁有白馬最棒的夜滑場地。Base Center 設施完善 (有 Subway、溫泉)。",
-                map: "https://maps.app.goo.gl/JqLbBjLt4aBBZKCQ6", // 建議換成真實連結
-                img: "https://goryu47.com/en/"
+                map: "https://maps.app.goo.gl/JqLbBjLt4aBBZKCQ6",
+                web: "https://goryu47.com/en/"
             },
             {
                 name: "Hakuba 47",
@@ -104,7 +110,7 @@
                 hours: "08:00 - 16:00 (無夜滑)",
                 desc: "白馬最強 Park (半管、跳台)！因為坡向朝北，春季雪質通常比其他雪場好。可從五龍山頂滑過去。",
                 map: "https://maps.app.goo.gl/NnW6B6g28urKYxww5",
-                img: "https://www.hakuba47.co.jp/winter/en/"
+                web: "https://www.hakuba47.co.jp/winter/en/"
             },
             {
                 name: "八方尾根 (Happo-One)",
@@ -116,7 +122,7 @@
                 hours: "08:00 - 16:00 (無夜滑)",
                 desc: "白馬最具代表性的雪場，規模最大。充滿挑戰性的紅黑線與饅頭 (Mogul)。聯絡道較窄且平，對單板新手較吃力。",
                 map: "https://maps.app.goo.gl/R4cVmfvQ7VKaHpou7",
-                img: "https://www.happo-one.jp/en/"
+                web: "https://www.happo-one.jp/en/"
             },
             {
                 name: "栂池高原 (Tsugaike)",
@@ -128,7 +134,7 @@
                 hours: "08:00 - 16:00 (3月後無夜滑)",
                 desc: "鐘鳴之丘擁有日本最寬闊的初級滑道 (1.2km寬)，新手練習轉彎完全不怕撞。另有需上課才能進入的 DBD 粉雪樹林區。",
                 map: "https://maps.app.goo.gl/WbFqqEgSiqN9qdPK7",
-                img: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?q=80&w=1000&auto=format&fit=crop"
+                web: "https://tsugaike.nippon-ski.com/en/"
             },
             {
                 name: "白馬岩岳 (Iwatake)",
@@ -140,7 +146,7 @@
                 hours: "08:00 - 16:00 (無夜滑)",
                 desc: "地形流暢，雪道寬且順，適合練 Carving。山頂有著名的 Mountain Harbor 和網美鞦韆，必去拍照！",
                 map: "https://maps.app.goo.gl/ivh4tTL9yDwb4g7M9",
-                img: "https://iwatake-ski.com/"
+                web: "https://iwatake-ski.com/"
             },
             {
                 name: "白馬 Sanosaka",
@@ -152,7 +158,7 @@
                 hours: "08:00 - 16:00 (無夜滑)",
                 desc: "唯一可眺望「青木湖」的雪場，景色優美。團客少，適合想要安靜練習的人。離您住的地方往南開很近。",
                 map: "https://maps.app.goo.gl/Q1s8rVESDZ9VVCbA8",
-                img: "https://en-1075.site-translation.com/cortina/ski/"
+                web: "https://sanosaka.jp/"
             }
         ];
 
@@ -185,6 +191,7 @@
                     if (loc.includes("移動")) tag = "移動日";
                     else if (loc.includes("會合")) tag = "會合日";
                     else if (loc.includes("新年") || loc.includes("跨年")) tag = "新年";
+                    else if (loc.includes("飛行")) tag = "飛行日";
                     
                     grouped[dKey] = {
                         date: dKey, dayChar: dayChar, tag: tag,
@@ -335,7 +342,7 @@
             }
         }
 
-        // --- 雪場 Modal 邏輯 ---
+        // --- 雪場 Modal 邏輯 (更新版) ---
         function showModal() { 
             const list = document.getElementById('resort-list');
             list.innerHTML = ""; // 清空舊的
@@ -343,29 +350,32 @@
             RESORTS.forEach(r => {
                 const tagsHtml = r.tags.map(t => `<span class="text-[10px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full mr-1">${t}</span>`).join('');
                 
+                // 改為無圖片，純資訊卡片，新增「官網」按鈕
                 const card = `
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden resort-card">
-                        <div class="h-32 bg-gray-200 relative">
-                            <img src="${r.img}" class="w-full h-full object-cover">
-                            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3 pt-8">
-                                <h3 class="text-white font-bold text-lg leading-none">${r.name}</h3>
-                                <p class="text-white/80 text-xs">${r.en}</p>
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 resort-card">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-bold text-xl text-slate-800">${r.name}</h3>
+                                <p class="text-xs text-gray-400">${r.en}</p>
                             </div>
+                             <div class="flex flex-col items-end gap-1">${tagsHtml}</div>
                         </div>
-                        <div class="p-4">
-                            <div class="flex flex-wrap gap-y-2 mb-3">${tagsHtml}</div>
-                            
-                            <div class="grid grid-cols-2 gap-3 text-sm mb-4">
-                                <div><span class="text-gray-400 text-xs block">車程</span><i class="fas fa-car mr-1"></i>${r.time}</div>
-                                <div><span class="text-gray-400 text-xs block">票價</span><i class="fas fa-tag mr-1"></i>${r.price}</div>
-                                <div><span class="text-gray-400 text-xs block">難度</span><i class="fas fa-layer-group mr-1"></i>${r.level}</div>
-                                <div><span class="text-gray-400 text-xs block">營業</span><i class="fas fa-clock mr-1"></i>${r.hours}</div>
-                            </div>
-                            
-                            <p class="text-sm text-gray-600 leading-relaxed mb-4 bg-slate-50 p-3 rounded-lg border border-slate-100">${r.desc}</p>
-                            
-                            <a href="${r.map}" target="_blank" class="block w-full text-center bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 rounded-lg transition-colors">
-                                <i class="fas fa-location-arrow mr-2"></i>Google 導航
+                        
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm mb-4 text-gray-600">
+                            <div><i class="fas fa-car w-5 text-center text-gray-400"></i>${r.time}</div>
+                            <div><i class="fas fa-tag w-5 text-center text-gray-400"></i>${r.price}</div>
+                            <div><i class="fas fa-layer-group w-5 text-center text-gray-400"></i>${r.level}</div>
+                            <div><i class="fas fa-clock w-5 text-center text-gray-400"></i>${r.hours}</div>
+                        </div>
+                        
+                        <p class="text-sm text-gray-600 leading-relaxed mb-5 bg-slate-50 p-3 rounded-lg border border-slate-100">${r.desc}</p>
+                        
+                        <div class="flex gap-3">
+                            <a href="${r.web}" target="_blank" class="flex-1 text-center border border-slate-300 text-slate-600 font-bold py-2.5 rounded-lg hover:bg-slate-50 transition-colors">
+                                <i class="fas fa-globe mr-2"></i>官網
+                            </a>
+                            <a href="${r.map}" target="_blank" class="flex-1 text-center bg-primary text-white font-bold py-2.5 rounded-lg hover:bg-blue-600 transition-colors shadow-sm">
+                                <i class="fas fa-location-arrow mr-2"></i>導航
                             </a>
                         </div>
                     </div>
