@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>2025-2026 東京白馬滑雪Trip</title>
+    <title>25-26 東京白馬滑雪Trip</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -30,9 +30,10 @@
 <body class="bg-slate-100 text-slate-800 font-sans pb-24">
 
     <header class="relative h-[200px] flex flex-col items-center justify-center text-white bg-slate-900 overflow-hidden">
-        <img src="https://images.pexels.com/photos/1933339/pexels-photo-1933339.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" class="absolute inset-0 w-full h-full object-cover opacity-60">
+        <img src="https://images.unsplash.com/photo-1520205628238-6d0925e0a6af?q=80&w=2000&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-60">
+        
         <div class="relative z-10 text-center px-4">
-            <h1 id="main-title" class="text-3xl font-bold drop-shadow-md">2025-2026 東京白馬滑雪Trip</h1>
+            <h1 id="main-title" class="text-3xl font-bold drop-shadow-md">25-26 東京白馬滑雪Trip</h1>
             <div id="countdown" class="mt-2 text-sm font-mono bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm">Loading...</div>
         </div>
     </header>
@@ -181,12 +182,10 @@
                 const dKey = row.Date.trim(); 
                 
                 if (!grouped[dKey]) {
-                    // 這裡直接使用 C 欄文字，不加任何額外文字
                     const locationText = row.Location || "";
                     const isHakuba = locationText.includes("白馬") || locationText.toLowerCase().includes("hakuba");
                     let dayChar = (row.Day || "").replace("週", "").trim(); 
                     
-                    // 自動抓取空白後的文字作為 Tag
                     const parts = locationText.split(' ');
                     let tag = "";
                     if (parts.length > 1) {
@@ -257,7 +256,6 @@
             wContainer.innerHTML = ""; tContainer.innerHTML = ""; cContainer.innerHTML = "";
 
             data.forEach((day, idx) => {
-                // Weather
                 const isSnow = day.weather.icon.includes('snowflake');
                 const bg = isSnow ? 'bg-blue-50 border-blue-200' : 'bg-white border-slate-100';
                 wContainer.innerHTML += `
@@ -268,7 +266,6 @@
                         <span class="text-[10px] text-gray-500">${day.weather.status}</span>
                     </div>`;
 
-                // Tab
                 const btn = document.createElement('button');
                 btn.className = `snap-start shrink-0 px-4 py-1.5 h-auto rounded-xl text-sm border border-slate-200 bg-white text-slate-500 transition-all flex flex-col items-center justify-center min-w-[80px]`;
                 let btnHtml = `<span class="font-bold leading-none mb-1">${day.date} <span class="text-xs font-normal">(${day.dayChar})</span></span>`;
@@ -279,7 +276,6 @@
                 btn.onclick = () => switchTab(idx);
                 tContainer.appendChild(btn);
 
-                // Content
                 const content = document.createElement('div');
                 content.id = `day-${idx}`;
                 content.className = `hidden animate-fade-in`;
@@ -344,7 +340,6 @@
             }
         }
 
-        // --- 雪場 Modal 邏輯 ---
         function showModal() { 
             const list = document.getElementById('resort-list');
             list.innerHTML = ""; 
@@ -394,6 +389,7 @@
         (async () => {
             const data = await fetchSheetData();
             if(data.length > 0) { render(data); await fetchWeather(data); render(data); }
+            // 標題已固定，不再需要讀取 CSV 更新
             const target = new Date("2026-01-04T12:00:00").getTime();
             setInterval(() => {
                 const diff = target - new Date().getTime();
