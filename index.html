@@ -296,7 +296,7 @@
                 await fetchWeather(data); 
                 render(data); 
             }
-            const target = new Date("2026-1-4T12:00:00").getTime();
+            const target = new Date("January 4, 2026 12:00:00").getTime();  
             setInterval(() => {
                 const diff = target - new Date().getTime();
                 const d = Math.floor(diff / (1000*60*60*24));
