@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.css"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     
     <script>
@@ -77,7 +76,7 @@
 
     <script>
         // ============================================
-        // ★★★ 請確認這裡還是您的 CSV 連結 ★★★
+        // ★★★ 請更換為您的 Google Sheet CSV 連結 ★★★
         // ============================================
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQmJ01aubtIQaCnOOaW7TbqINSX0sGE8OoewKq7uREL9lEedFC1rLWc90tHCVhmOecig-wrQH-9RPml/pub?gid=811463742&single=true&output=csv";
         
@@ -96,53 +95,49 @@
             });
         }
 
-        // ★ 核心升級：抓取星期與備註
+        // ★ 核心升級：讀取 Type 欄位
         function processSheet(data) {
             const grouped = {};
             data.forEach(row => {
-                if (!row.Date || !row.Title) return;
+                if (!row.Date || (!row.Title && !row.Type)) return; // 容錯
                 const dKey = row.Date.trim(); 
                 
                 if (!grouped[dKey]) {
-                    // 1. 處理地點判斷 (天氣用)
                     const loc = row.Location || "";
                     const isHakuba = loc.includes("白馬") || loc.toLowerCase().includes("hakuba");
-                    
-                    // 2. 處理星期：把 "週一" 變成 "一"
                     let dayChar = (row.Day || "").replace("週", "").trim(); 
-                    if(dayChar === "") dayChar = ""; // 防止空白
-
-                    // 3. 處理按鈕備註：偵測關鍵字
+                    
                     let tag = "";
                     if (loc.includes("移動")) tag = "移動日";
                     else if (loc.includes("會合")) tag = "會合日";
                     else if (loc.includes("新年") || loc.includes("跨年")) tag = "新年";
-                    else if (loc.includes("飛行")) tag = "飛行日";
                     
                     grouped[dKey] = {
                         date: dKey,
-                        dayChar: dayChar, // 存起來：星期幾
-                        tag: tag,         // 存起來：特殊備註
+                        dayChar: dayChar,
+                        tag: tag,
                         cityKey: isHakuba ? "Hakuba" : "Tokyo",
-                        location: isHakuba ? "白馬 Hakuba" : "東京 Tokyo", // 標題顯示用
+                        location: isHakuba ? "白馬 Hakuba" : "東京 Tokyo",
                         weather: { temp: "N/A", icon: "fa-calendar", status: "預報未出" },
                         details: []
                     };
                 }
 
-                // 如果同一天後面有出現更重要的關鍵字，也可以更新 tag (例如第一行沒寫移動，第二行寫了)
-                const loc = row.Location || "";
-                if (!grouped[dKey].tag) {
-                     if (loc.includes("移動")) grouped[dKey].tag = "移動日";
-                     else if (loc.includes("會合")) grouped[dKey].tag = "會合日";
-                     else if (loc.includes("新年") || loc.includes("跨年")) grouped[dKey].tag = "新年";
-                }
-
+                // 處理 Icon
                 const iconRaw = (row.Icon || "fa-circle").trim();
                 const iconHtml = iconRaw.startsWith("fa-") ? `<i class="fas ${iconRaw}"></i>` : `<span class="text-xl">${iconRaw}</span>`;
 
+                // ★ 新增：讀取 Type
+                // 如果 Excel 沒有 Type 欄位，預設為 'event'
+                const type = row.Type ? row.Type.trim().toLowerCase() : 'event';
+
                 grouped[dKey].details.push({
-                    time: row.Time, title: row.Title, desc: row.Desc, link: row.Link, iconHtml: iconHtml
+                    time: row.Time || "", 
+                    title: row.Title || "", 
+                    desc: row.Desc, 
+                    link: row.Link, 
+                    iconHtml: iconHtml,
+                    type: type // 存起來，渲染時判斷
                 });
             });
             return Object.values(grouped);
@@ -199,7 +194,7 @@
             wContainer.innerHTML = ""; tContainer.innerHTML = ""; cContainer.innerHTML = "";
 
             data.forEach((day, idx) => {
-                // Weather Card
+                // Weather
                 const isSnow = day.weather.icon.includes('snowflake');
                 const bg = isSnow ? 'bg-blue-50 border-blue-200' : 'bg-white border-slate-100';
                 wContainer.innerHTML += `
@@ -210,22 +205,11 @@
                         <span class="text-[10px] text-gray-500">${day.weather.status}</span>
                     </div>`;
 
-                // ★ Tab 按鈕升級：加入星期與備註
-                // 使用 flex-col 讓日期在上面，備註在下面
+                // Tab
                 const btn = document.createElement('button');
                 btn.className = `snap-start shrink-0 px-4 py-1.5 h-auto rounded-xl text-sm border border-slate-200 bg-white text-slate-500 transition-all flex flex-col items-center justify-center min-w-[80px]`;
-                
-                // 組合 HTML：日期 + (星期) + 備註
                 let btnHtml = `<span class="font-bold leading-none mb-1">${day.date} <span class="text-xs font-normal">(${day.dayChar})</span></span>`;
-                
-                if (day.tag) {
-                    // 如果有備註 (如移動日)，顯示一個小標籤
-                    btnHtml += `<span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 rounded-full leading-tight">${day.tag}</span>`;
-                } else {
-                    // 為了版面整齊，沒有備註也可以放一個空白佔位，或者就留白
-                    // btnHtml += `<span class="text-[10px] text-transparent">.</span>`; // 這樣按鈕會等高
-                }
-
+                if (day.tag) btnHtml += `<span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 rounded-full leading-tight">${day.tag}</span>`;
                 btn.innerHTML = btnHtml;
                 btn.onclick = () => switchTab(idx);
                 tContainer.appendChild(btn);
@@ -235,23 +219,44 @@
                 content.id = `day-${idx}`;
                 content.className = `hidden animate-fade-in`;
                 
-                let html = `<h2 class="text-2xl font-bold mb-4">${day.location} <span class="text-sm font-normal text-gray-500 ml-2">${day.date} (${day.dayChar})</span></h2><div class="space-y-4">`;
-                day.details.forEach(item => {
-                    html += `
+                let html = `<h2 class="text-2xl font-bold mb-4">${day.location}</h2><div class="space-y-0">`; // space-y-0 為了讓交通線連起來
+                
+                day.details.forEach((item, i) => {
+                    const isLast = i === day.details.length - 1;
+                    
+                    if (item.type === 'transit') {
+                        // ★★★ 交通樣式渲染 (Commute Widget) ★★★
+                        html += `
+                        <div class="flex relative pl-[19px]"> <div class="absolute left-[19px] top-0 bottom-0 w-0.5 border-l-2 border-dotted border-slate-300"></div>
+                            
+                            <div class="relative z-10 my-2 ml-6">
+                                <div class="inline-flex items-center bg-slate-100 border border-slate-200 rounded-full px-3 py-1 text-xs text-slate-600 shadow-sm">
+                                    <span class="mr-2 text-primary">${item.iconHtml}</span>
+                                    <span class="font-bold mr-2">${item.title}</span>
+                                    <span class="text-slate-400">${item.desc || ""}</span>
+                                </div>
+                            </div>
+                        </div>`;
+                    } else {
+                        // ★★★ 一般行程樣式 (Card) ★★★
+                        html += `
                         <div class="flex gap-4 relative pb-6 group">
-                            <div class="absolute left-[19px] top-8 bottom-0 w-0.5 bg-slate-200"></div>
-                            <div class="relative shrink-0 w-10 h-10 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center text-primary z-10 overflow-hidden shadow-sm">
+                            <div class="absolute left-[19px] top-8 bottom-0 w-0.5 bg-slate-200 ${isLast ? 'hidden' : ''}"></div>
+                            
+                            <div class="relative shrink-0 w-10 h-10 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center text-primary z-10 overflow-hidden shadow-sm group-hover:border-primary transition-colors">
                                 ${item.iconHtml}
                             </div>
-                            <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-50 flex-1">
+                            
+                            <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-50 flex-1 hover:shadow-md transition-shadow">
                                 <div class="flex justify-between items-start">
                                     <h3 class="font-bold text-slate-800">${item.title}</h3>
                                     <span class="text-xs bg-slate-100 px-2 py-1 rounded">${item.time}</span>
                                 </div>
-                                <p class="text-sm text-gray-600 mt-1">${item.desc || ""}</p>
-                                ${item.link ? `<a href="${item.link}" target="_blank" class="inline-block mt-2 text-xs text-primary underline">開啟連結</a>` : ''}
+                                ${item.desc ? `<p class="text-sm text-gray-600 mt-1">${item.desc}</p>` : ''}
+                                ${item.link ? `<a href="${item.link}" target="_blank" class="inline-block mt-2 text-xs text-primary underline"><i class="fas fa-location-arrow mr-1"></i>導航</a>` : ''}
                             </div>
                         </div>`;
+                    }
                 });
                 html += `</div>`;
                 content.innerHTML = html;
@@ -268,19 +273,15 @@
                 if(i===idx) {
                     tabs[i].classList.add('tab-active', 'bg-primary', 'text-white');
                     tabs[i].classList.remove('bg-white', 'text-slate-500');
-                    // 讓標籤變白色
-                    const tagSpan = tabs[i].querySelector('span.bg-slate-100');
-                    if(tagSpan) { tagSpan.classList.remove('bg-slate-100', 'text-slate-600'); tagSpan.classList.add('bg-white/20', 'text-white'); }
-                    
+                    const tag = tabs[i].querySelector('span.bg-slate-100');
+                    if(tag) { tag.classList.replace('bg-slate-100','bg-white/20'); tag.classList.replace('text-slate-600','text-white'); }
                     contents[i].classList.remove('hidden');
                     tabs[i].scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
                 } else {
                     tabs[i].classList.remove('tab-active', 'bg-primary', 'text-white');
                     tabs[i].classList.add('bg-white', 'text-slate-500');
-                     // 標籤變回灰色
-                    const tagSpan = tabs[i].querySelector('span.bg-white\\/20');
-                    if(tagSpan) { tagSpan.classList.remove('bg-white/20', 'text-white'); tagSpan.classList.add('bg-slate-100', 'text-slate-600'); }
-
+                    const tag = tabs[i].querySelector('span.bg-white\\/20');
+                    if(tag) { tag.classList.replace('bg-white/20','bg-slate-100'); tag.classList.replace('text-white','text-slate-600'); }
                     contents[i].classList.add('hidden');
                 }
             }
@@ -295,7 +296,7 @@
                 await fetchWeather(data); 
                 render(data); 
             }
-            const target = new Date("2025-12-21T16:00:00").getTime();
+            const target = new Date("2026-1-4T12:00:00").getTime();
             setInterval(() => {
                 const diff = target - new Date().getTime();
                 const d = Math.floor(diff / (1000*60*60*24));
