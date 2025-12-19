@@ -88,91 +88,89 @@
     <script>
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQmJ01aubtIQaCnOOaW7TbqINSX0sGE8OoewKq7uREL9lEedFC1rLWc90tHCVhmOecig-wrQH-9RPml/pub?gid=811463742&single=true&output=csv";
         
-        // 新增 live 屬性作為情報按鈕連結
         const RESORTS = [
             {
-name: "白馬五龍 (Goryu)",
-en: "Hakuba Goryu / エイブル白馬五竜",
-tags: ["新手友善", "夜滑之王", "交通最便"],
-price: "¥8,000 (含47)",
-time: "約 3-5 分",
-level: "全程度",
-hours: "08:00 - 16:50 (Toomi Slope 晨滑07:00-08:00 ; 夜滑 18:00 - 21:30)",
-desc: "距離住宿最近，山腳雪道寬敞。Base Center 設施完善，溫泉開放12:00-22:00，最終入場 21:30。",
-map: "https://maps.app.goo.gl/3Q8Y6J7p8qA2",
-web: "https://goryu47.com/en/",
-live: "https://japan-skiguide.com/guide/htm/r0041tws.htm" // 情報連結範例
-},
-{
-name: "Hakuba 47",
-en: "Hakuba 47 Winter Sports Park",
-tags: ["地形公園", "雪質保證", "朝北坡向"],
-price: "¥8,000 (含五龍)",
-time: "約 10-12 分",
-level: "中高級 (Park)",
-hours: "08:00 - 16:00",
-desc: "白馬最強 Park (半管、跳台)！因為坡向朝北，春季雪質通常比其他雪場好。可從五龍山頂滑過去。",
-map: "https://maps.app.goo.gl/uXpW6jXyF8z1",
-web: "https://www.hakuba47.co.jp/winter/en/",
-live: "https://tw.wamazing.com/snow/resorts/hakuba47"
-},
-{
-name: "八方尾根 (Happo-One)",
-en: "Happo-One / 白馬八方尾根",
-tags: ["奧運場地", "高手向", "景色壯觀"],
-price: "¥7,200 - 8,500",
-time: "約 15 分",
-level: "中高級",
-hours: "08:00 - 16:00",
-desc: "白馬最具代表性的雪場，規模最大。充滿挑戰性的紅黑線與饅頭 (Mogul)。聯絡道較窄且平，對單板新手較吃力。",
-map: "https://maps.app.goo.gl/pM7m8f1S2xY3",
-web: "https://www.happo-one.jp/en/",
-live: "https://tw.wamazing.com/snow/resorts/happo-one"
-},
-{
-name: "栂池高原 (Tsugaike)",
-en: "Tsugaike Kogen / 栂池高原",
-tags: ["超寬綠道", "新手天堂", "DBD粉雪"],
-price: "¥7,000 - 7,500",
-time: "約 20-25 分",
-level: "初中級",
-hours: "08:00 - 17:00",
-desc: "鐘鳴之丘擁有日本最寬闊的初級滑道 (1.2km寬)，新手練習轉彎完全不怕撞。另有需上課才能進入的 DBD 粉雪樹林區。",
-map: "https://maps.app.goo.gl/vK8n9e4R5tY2",
-web: "https://tsugaike.nippon-ski.com/en/",
-live: "https://tw.wamazing.com/snow/resorts/tsugaike-kogen"
-},
-{
-name: "白馬岩岳 (Iwatake)",
-en: "Hakuba Iwatake / 白馬岩岳",
-tags: ["網美鞦韆", "Carving聖地", "避風"],
-price: "¥6,500 - 7,000",
-time: "約 15-18 分",
-level: "初中級",
-hours: "08:00 - 17:00",
-desc: "地形流暢，雪道寬且順，適合練 Carving。山頂有著名的 Mountain Harbor 和網美鞦韆，必去拍照！",
-map: "https://maps.app.goo.gl/L9m8f2S7xY1",
-web: "https://iwatake-ski.com/",
-live: "https://tw.wamazing.com/snow/resorts/hakuba-iwatake"
-}
-{
-name: "白馬 Sanosaka",
-en: "White Resort Hakuba Sanosaka",
-tags: ["湖景滑雪", "人少清幽", "高CP值"],
-price: "¥4,800 - 5,500",
-time: "約 5-8 分",
-level: "初中級",
-hours: "08:00 - 16:00 (無夜滑)",
-desc: "唯一可眺望「青木湖」的雪場，景色優美。團客少，適合想要安靜練習的人。",
-map: "https://maps.app.goo.gl/Q1s8rVESDZ9VVCbA8",
-web: "https://sanosaka.jp/",
-live: "https://tw.wamazing.com/snow/resorts/sanosaka" // Sanosaka 的即時報告頁面
-}
+                name: "白馬五龍 (Goryu)",
+                en: "Hakuba Goryu / エイブル白馬五竜",
+                tags: ["新手友善", "夜滑之王", "交通最便"],
+                price: "¥8,000 (含47)",
+                time: "約 3-5 分",
+                level: "全程度",
+                hours: "08:00 - 16:50 (Toomi Slope 晨滑07:00-08:00 ; 夜滑 18:00 - 21:30)",
+                desc: "距離住宿最近，山腳雪道寬敞。Base Center 設施完善，溫泉開放12:00-22:00，最終入場 21:30。",
+                map: "https://maps.app.goo.gl/3Q8Y6J7p8qA2",
+                web: "https://goryu47.com/en/",
+                live: "https://japan-skiguide.com/guide/htm/r0041tws.htm"
+            },
+            {
+                name: "Hakuba 47",
+                en: "Hakuba 47 Winter Sports Park",
+                tags: ["地形公園", "雪質保證", "朝北坡向"],
+                price: "¥8,000 (含五龍)",
+                time: "約 10-12 分",
+                level: "中高級 (Park)",
+                hours: "08:00 - 16:00",
+                desc: "白馬最強 Park (半管、跳台)！因為坡向朝北，春季雪質通常比其他雪場好。可從五龍山頂滑過去。",
+                map: "https://maps.app.goo.gl/uXpW6jXyF8z1",
+                web: "https://www.hakuba47.co.jp/winter/en/",
+                live: "https://tw.wamazing.com/snow/resorts/hakuba47"
+            },
+            {
+                name: "八方尾根 (Happo-One)",
+                en: "Happo-One / 白馬八方尾根",
+                tags: ["奧運場地", "高手向", "景色壯觀"],
+                price: "¥7,200 - 8,500",
+                time: "約 15 分",
+                level: "中高級",
+                hours: "08:00 - 16:00",
+                desc: "白馬最具代表性的雪場，規模最大。充滿挑戰性的紅黑線與饅頭 (Mogul)。聯絡道較窄且平，對單板新手較吃力。",
+                map: "https://maps.app.goo.gl/pM7m8f1S2xY3",
+                web: "https://www.happo-one.jp/en/",
+                live: "https://tw.wamazing.com/snow/resorts/happo-one"
+            },
+            {
+                name: "栂池高原 (Tsugaike)",
+                en: "Tsugaike Kogen / 栂池高原",
+                tags: ["超寬綠道", "新手天堂", "DBD粉雪"],
+                price: "¥7,000 - 7,500",
+                time: "約 20-25 分",
+                level: "初中級",
+                hours: "08:00 - 17:00",
+                desc: "鐘鳴之丘擁有日本最寬闊的初級滑道 (1.2km寬)，新手練習轉彎完全不怕撞。另有需上課才能進入的 DBD 粉雪樹林區。",
+                map: "https://maps.app.goo.gl/vK8n9e4R5tY2",
+                web: "https://tsugaike.nippon-ski.com/en/",
+                live: "https://tw.wamazing.com/snow/resorts/tsugaike-kogen"
+            },
+            {
+                name: "白馬岩岳 (Iwatake)",
+                en: "Hakuba Iwatake / 白馬岩岳",
+                tags: ["網美鞦韆", "Carving聖地", "避風"],
+                price: "¥6,500 - 7,000",
+                time: "約 15-18 分",
+                level: "初中級",
+                hours: "08:00 - 17:00",
+                desc: "地形流暢，雪道寬且順，適合練 Carving。山頂有著名的 Mountain Harbor 和網美鞦韆，必去拍照！",
+                map: "https://maps.app.goo.gl/L9m8f2S7xY1",
+                web: "https://iwatake-ski.com/",
+                live: "https://tw.wamazing.com/snow/resorts/hakuba-iwatake"
+            },
+            {
+                name: "白馬 Sanosaka",
+                en: "White Resort Hakuba Sanosaka",
+                tags: ["湖景滑雪", "人少清幽", "高CP值"],
+                price: "¥4,800 - 5,500",
+                time: "約 5-8 分",
+                level: "初中級",
+                hours: "08:00 - 16:00 (無夜滑)",
+                desc: "唯一可眺望「青木湖」的雪場，景色優美。團客少，適合想要安靜練習的人。",
+                map: "https://maps.app.goo.gl/Q1s8rVESDZ9VVCbA8",
+                web: "https://sanosaka.jp/",
+                live: "https://tw.wamazing.com/snow/resorts/sanosaka"
+            }
         ];
 
         const coords = { Tokyo: { lat: 35.6895, long: 139.6917 }, Hakuba: { lat: 36.6982, long: 137.8619 } };
 
-        // ... (fetchSheetData, processSheet, fetchWeather, getWeatherIcon, switchTab 函數保持不變) ...
         async function fetchSheetData() { return new Promise((resolve) => { Papa.parse(SHEET_URL, { download: true, header: true, skipEmptyLines: true, complete: (res) => resolve(processSheet(res.data)), error: (err) => { console.error(err); alert("CSV 讀取失敗"); } }); }); }
         function processSheet(data) { const grouped = {}; data.forEach(row => { if (!row.Date || (!row.Title && !row.Type)) return; const dKey = row.Date.trim(); if (!grouped[dKey]) { const locationText = row.Location || ""; const isHakuba = locationText.includes("白馬") || locationText.toLowerCase().includes("hakuba"); let dayChar = (row.Day || "").replace("週", "").trim(); const parts = locationText.split(' '); let tag = parts.length > 1 ? parts.slice(1).join(' ') : ""; grouped[dKey] = { date: dKey, dayChar: dayChar, tag: tag, cityKey: isHakuba ? "Hakuba" : "Tokyo", location: locationText, weather: { temp: "N/A", icon: "fa-calendar", status: "預報未出" }, details: [] }; } const iconRaw = (row.Icon || "fa-circle").trim(); const iconHtml = iconRaw.startsWith("fa-") ? `<i class="fas ${iconRaw}"></i>` : `<span class="text-xl">${iconRaw}</span>`; const type = row.Type ? row.Type.trim().toLowerCase() : 'event'; grouped[dKey].details.push({ time: row.Time || "", title: row.Title || "", desc: row.Desc, link: row.Link, iconHtml: iconHtml, type: type }); }); return Object.values(grouped); }
         async function fetchWeather(daysData) { const urlBase = "https://api.open-meteo.com/v1/forecast?daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FTokyo&forecast_days=16"; const urls = { Tokyo: `${urlBase}&latitude=${coords.Tokyo.lat}&longitude=${coords.Tokyo.long}`, Hakuba: `${urlBase}&latitude=${coords.Hakuba.lat}&longitude=${coords.Hakuba.long}` }; try { const [resTok, resHak] = await Promise.all([fetch(urls.Tokyo), fetch(urls.Hakuba)]); const db = { Tokyo: await resTok.json(), Hakuba: await resHak.json() }; document.getElementById('weather-status').innerText = "已更新"; daysData.forEach(day => { const cityData = db[day.cityKey]; if (!cityData || !cityData.daily) return; const targetMMDD = day.date.replace('/', '-'); const timeList = cityData.daily.time; const matchIndex = timeList.findIndex(t => t.endsWith(targetMMDD)); if (matchIndex !== -1) { const min = Math.round(cityData.daily.temperature_2m_min[matchIndex]); const max = Math.round(cityData.daily.temperature_2m_max[matchIndex]); const rain = cityData.daily.precipitation_probability_max[matchIndex]; const code = cityData.daily.weathercode[matchIndex]; day.weather.temp = `${min}°~${max}°`; day.weather.status = rain > 0 ? `${rain}% 降水` : "好天氣"; day.weather.icon = getWeatherIcon(code); } }); } catch (e) { console.error("天氣失敗", e); } }
@@ -243,7 +241,6 @@ live: "https://tw.wamazing.com/snow/resorts/sanosaka" // Sanosaka 的即時報�
             }
         }
 
-        // 修改後的雪場 Modal 生成邏輯
         function showModal() { 
             const list = document.getElementById('resort-list');
             list.innerHTML = ""; 
