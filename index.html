@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>25-26 東京白馬滑雪Trip</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏔️</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏔️</text></svg>">
+    
     <script>
         tailwind.config = {
             theme: {
@@ -90,83 +91,83 @@
         // 新增 live 屬性作為情報按鈕連結
         const RESORTS = [
             {
-                name: "白馬五龍 (Goryu)",
-                en: "Hakuba Goryu / エイブル白馬五竜",
-                tags: ["新手友善", "夜滑之王", "交通最便"],
-                price: "¥8,000 (含47)",
-                time: "約 3-5 分",
-                level: "全程度",
-                hours: "08:00 - 16:50 (夜滑至21:30)", 
-                desc: "距離最近，山腳雪道寬敞。Base Center 設施完善，溫泉開放至 22:00。",
-                map: "https://maps.app.goo.gl/3Q8Y6J7p8qA2",
-                web: "https://goryu47.com/en/",
-                live: "https://japan-skiguide.com/guide/htm/r0041tws.htm" // 情報連結範例
-            },
-            {
-                name: "Hakuba 47",
-                en: "Hakuba 47 Winter Sports Park",
-                tags: ["地形公園", "雪質保證", "朝北坡向"],
-                price: "¥8,000 (含五龍)",
-                time: "約 10-12 分",
-                level: "中高級 (Park)",
-                hours: "08:00 - 16:00",
-                desc: "白馬最強 Park！坡向朝北雪質優，可從五龍山頂滑過去。",
-                map: "https://maps.app.goo.gl/uXpW6jXyF8z1",
-                web: "https://www.hakuba47.co.jp/winter/en/",
-                live: "https://tw.wamazing.com/snow/resorts/hakuba47"
-            },
-            {
-                name: "八方尾根 (Happo-One)",
-                en: "Happo-One / 白馬八方尾根",
-                tags: ["奧運場地", "高手向", "景色壯觀"],
-                price: "¥7,200 - 8,500",
-                time: "約 15 分",
-                level: "中高級",
-                hours: "08:00 - 16:00",
-                desc: "規模最大。充滿挑戰性的紅黑線與饅頭坡，景色極佳但新手不推。",
-                map: "https://maps.app.goo.gl/pM7m8f1S2xY3",
-                web: "https://www.happo-one.jp/en/",
-                live: "https://tw.wamazing.com/snow/resorts/happo-one"
-            },
-            {
-                name: "栂池高原 (Tsugaike)",
-                en: "Tsugaike Kogen / 栂池高原",
-                tags: ["超寬綠道", "新手天堂", "DBD粉雪"],
-                price: "¥7,000 - 7,500",
-                time: "約 20-25 分",
-                level: "初中級",
-                hours: "08:00 - 17:00",
-                desc: "擁有日本最寬闊初級滑道。另有需上課才能進入的 DBD 粉雪區。",
-                map: "https://maps.app.goo.gl/vK8n9e4R5tY2",
-                web: "https://tsugaike.nippon-ski.com/en/",
-                live: "https://tw.wamazing.com/snow/resorts/tsugaike-kogen"
-            },
-            {
-                name: "白馬岩岳 (Iwatake)",
-                en: "Hakuba Iwatake / 白馬岩岳",
-                tags: ["網美鞦韆", "Carving聖地", "避風"],
-                price: "¥6,500 - 7,000",
-                time: "約 15-18 分",
-                level: "初中級",
-                hours: "08:00 - 17:00",
-                desc: "雪道寬且順，山頂有著名的 Mountain Harbor 和網美鞦韆，必去拍照！",
-                map: "https://maps.app.goo.gl/L9m8f2S7xY1",
-                web: "https://iwatake-ski.com/",
-                live: "https://tw.wamazing.com/snow/resorts/hakuba-iwatake"
-            }
-            {
-                name: "白馬 Sanosaka",
-                en: "White Resort Hakuba Sanosaka",
-                tags: ["湖景滑雪", "人少清幽", "高CP值"],
-                price: "¥4,800 - 5,500",
-                time: "約 5-8 分",
-                level: "初中級",
-                hours: "08:00 - 16:00 (無夜滑)",
-                desc: "唯一可眺望「青木湖」的雪場，景色優美。團客少，適合想要安靜練習的人。",
-                map: "https://maps.app.goo.gl/Q1s8rVESDZ9VVCbA8",
-                web: "https://sanosaka.jp/",
-                live: "https://tw.wamazing.com/snow/resorts/sanosaka" // Sanosaka 的即時報告頁面
-            }
+name: "白馬五龍 (Goryu)",
+en: "Hakuba Goryu / エイブル白馬五竜",
+tags: ["新手友善", "夜滑之王", "交通最便"],
+price: "¥8,000 (含47)",
+time: "約 3-5 分",
+level: "全程度",
+hours: "08:00 - 16:50 (Toomi Slope 晨滑07:00-08:00 ; 夜滑 18:00 - 21:30)",
+desc: "距離住宿最近，山腳雪道寬敞。Base Center 設施完善，溫泉開放12:00-22:00，最終入場 21:30。",
+map: "https://maps.app.goo.gl/3Q8Y6J7p8qA2",
+web: "https://goryu47.com/en/",
+live: "https://japan-skiguide.com/guide/htm/r0041tws.htm" // 情報連結範例
+},
+{
+name: "Hakuba 47",
+en: "Hakuba 47 Winter Sports Park",
+tags: ["地形公園", "雪質保證", "朝北坡向"],
+price: "¥8,000 (含五龍)",
+time: "約 10-12 分",
+level: "中高級 (Park)",
+hours: "08:00 - 16:00",
+desc: "白馬最強 Park (半管、跳台)！因為坡向朝北，春季雪質通常比其他雪場好。可從五龍山頂滑過去。",
+map: "https://maps.app.goo.gl/uXpW6jXyF8z1",
+web: "https://www.hakuba47.co.jp/winter/en/",
+live: "https://tw.wamazing.com/snow/resorts/hakuba47"
+},
+{
+name: "八方尾根 (Happo-One)",
+en: "Happo-One / 白馬八方尾根",
+tags: ["奧運場地", "高手向", "景色壯觀"],
+price: "¥7,200 - 8,500",
+time: "約 15 分",
+level: "中高級",
+hours: "08:00 - 16:00",
+desc: "白馬最具代表性的雪場，規模最大。充滿挑戰性的紅黑線與饅頭 (Mogul)。聯絡道較窄且平，對單板新手較吃力。",
+map: "https://maps.app.goo.gl/pM7m8f1S2xY3",
+web: "https://www.happo-one.jp/en/",
+live: "https://tw.wamazing.com/snow/resorts/happo-one"
+},
+{
+name: "栂池高原 (Tsugaike)",
+en: "Tsugaike Kogen / 栂池高原",
+tags: ["超寬綠道", "新手天堂", "DBD粉雪"],
+price: "¥7,000 - 7,500",
+time: "約 20-25 分",
+level: "初中級",
+hours: "08:00 - 17:00",
+desc: "鐘鳴之丘擁有日本最寬闊的初級滑道 (1.2km寬)，新手練習轉彎完全不怕撞。另有需上課才能進入的 DBD 粉雪樹林區。",
+map: "https://maps.app.goo.gl/vK8n9e4R5tY2",
+web: "https://tsugaike.nippon-ski.com/en/",
+live: "https://tw.wamazing.com/snow/resorts/tsugaike-kogen"
+},
+{
+name: "白馬岩岳 (Iwatake)",
+en: "Hakuba Iwatake / 白馬岩岳",
+tags: ["網美鞦韆", "Carving聖地", "避風"],
+price: "¥6,500 - 7,000",
+time: "約 15-18 分",
+level: "初中級",
+hours: "08:00 - 17:00",
+desc: "地形流暢，雪道寬且順，適合練 Carving。山頂有著名的 Mountain Harbor 和網美鞦韆，必去拍照！",
+map: "https://maps.app.goo.gl/L9m8f2S7xY1",
+web: "https://iwatake-ski.com/",
+live: "https://tw.wamazing.com/snow/resorts/hakuba-iwatake"
+}
+{
+name: "白馬 Sanosaka",
+en: "White Resort Hakuba Sanosaka",
+tags: ["湖景滑雪", "人少清幽", "高CP值"],
+price: "¥4,800 - 5,500",
+time: "約 5-8 分",
+level: "初中級",
+hours: "08:00 - 16:00 (無夜滑)",
+desc: "唯一可眺望「青木湖」的雪場，景色優美。團客少，適合想要安靜練習的人。",
+map: "https://maps.app.goo.gl/Q1s8rVESDZ9VVCbA8",
+web: "https://sanosaka.jp/",
+live: "https://tw.wamazing.com/snow/resorts/sanosaka" // Sanosaka 的即時報告頁面
+}
         ];
 
         const coords = { Tokyo: { lat: 35.6895, long: 139.6917 }, Hakuba: { lat: 36.6982, long: 137.8619 } };
